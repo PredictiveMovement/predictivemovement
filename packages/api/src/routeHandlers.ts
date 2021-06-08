@@ -18,8 +18,8 @@ body: At '/0/end_address' Missing required property: end_address
         volume: 0,
         weight: 0,
       },
-      earliest_start: '2018-01-01 14:10:10',
-      latest_end: 'tji',
+      earliest_start: '2021-07-01T17:30:00Z',
+      latest_end: ''2021-07-01T21:30:00Z',
       metadata: {},
       start_address: {
         city: '',

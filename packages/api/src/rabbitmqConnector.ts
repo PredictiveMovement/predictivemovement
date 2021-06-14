@@ -45,7 +45,7 @@ amqp
     .queue('booking_notifications.api', {
       durable: true,
     })
-    .subscribe({ noAck: true })
+    .subscribe({ noAck: true }, '*')
     .map((res: any) => {
       const json = res.json()
       return [res.fields.routingKey, json]

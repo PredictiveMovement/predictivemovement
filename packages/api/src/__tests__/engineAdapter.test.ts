@@ -1,6 +1,9 @@
 import { createBooking, CreateBookingInput } from '../engineAdapter'
-
+import { amqp } from '../rabbitmqConnector'
 describe('engine adapter', () => {
+
+  afterAll(() => amqp.close())
+
   describe('#createBooking()', () => {
     it('generates an id and sends the booking payload to rabbit', async () => {
       expect.assertions(1)

@@ -1,6 +1,6 @@
-const amqp = require('fluent-amqp')(process.env.AMQP_URL || 'amqp://localhost')
+export const amqp = require('fluent-amqp')(process.env.AMQP_URL || 'amqp://localhost')
 import EventEmitter from 'events'
-
+amqp.connect()
 export interface EngineBookingRequest {
   id: string,
   pickup: {

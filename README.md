@@ -89,28 +89,29 @@ create .env-file in packages/engine-ui/.env with
 
     docker-compose up
 
-#### Run migrations and start the engine
-
-    cd packages/engine_umbrella/
-    mix deps.get
-    mix setup_dev
-    iex -S mix
-
 #### Running tests
 
 Make sure you've started the dependencies with docker-compose up -d then run
 
-    cd packages/engine_umbrella/
-    mix deps.get
-    mix setupTestDatabase
-    mix test
+```bash
+cd packages/engine_umbrella/
+mix deps.get
+mix setupTestDatabase
+mix test
+```
+
+#### Run migrations and start the engine
+
+```bash
+cd packages/engine_umbrella/
+mix deps.get
+mix setup_dev
+iex -S mix # run the engine in an elixir shell
+```
 
 ### Helper/utility functions for populating the state
 
-The umbrella project has an application "message_generator" which is used to create rabbitMQ messages for producing transports and bookings. First start the umbrella project in an elixir shell
-
-    cd packages/engine_umbrella/
-    iex -S mix
+The umbrella project has an application "message_generator" which is used to create rabbitMQ messages for producing transports and bookings. When the umbrella project is running (`iex -S mix` as mentioned above) you can use the elixir shell to generate bookings and transports.
 
 Then the Generator module is available inside the shell.
 
@@ -118,6 +119,12 @@ Then the Generator module is available inside the shell.
 
 The argument can be a map containing properties or an atom for creating a generic one close to a city, (`:stockholm`, `:gothenburg`, `:ljusdal`)
 or in the case of the add_transport; a keyword list can also be used containing `:phone`, i.e: `Generator.add_transport(phone: "0735333")`
+
+Examples:
+```elixir
+iex(3)> Generator.add_booking(:stockholm)
+iex(3)> Generator.add_transport(phone: "0735333")
+```
 
 **Design mockup:** [Figma](https://www.figma.com/file/DdBjpoKd0T9OkWmhlpd48Nfa/Predictive-Movement)
 

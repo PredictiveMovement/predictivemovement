@@ -70,8 +70,16 @@ defmodule Vehicle do
       vehicle_info
       |> Map.put_new(:end_address, start_address)
       |> Map.put_new(:capacity, %{volume: 15, weight: 700})
-      |> Map.update(:metadata, nil, &Jason.encode!/1)const json = res.json()
-      return [res.fields.routingKey, json]
+      |> Map.update(:metadata, nil, &Jason.encode!/1)
+
+    vehicle = struct(Vehicle, vehicle_fields)
+
+    with true <- Vex.valid?(vehicle) do
+      %VehicleRegistered{vehicle: vehicle}
+      |> ES.add_event()
+
+      apply_vehicle_to_state(vehicle)
+      vehicle_fields.id
     else
       _ ->
         vehicle

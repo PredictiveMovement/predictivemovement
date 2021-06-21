@@ -6,6 +6,7 @@
 export interface paths {
   "/transports": {
     get: operations["get_transports"];
+    post: operations["create_transport"];
   };
   "/itinerary/{transport_id}": {
     get: operations["get_itinerary"];
@@ -38,15 +39,13 @@ export interface components {
       height?: number;
     };
     Transport: {
-      transport_id?: string;
-      busy?: boolean;
+      id?: string;
       capacity?: {
         volume?: number;
         weight?: number;
       };
       earliest_start?: string;
       latest_end?: string;
-      metadata?: { [key: string]: any };
       start_address?: components["schemas"]["Address"];
       end_address?: components["schemas"]["Address"];
     };
@@ -95,6 +94,30 @@ export interface operations {
       200: {
         content: {
           "application/json; charset=utf-8": components["schemas"]["Transport"][];
+        };
+      };
+    };
+  };
+  create_transport: {
+    responses: {
+      /** Created */
+      201: {
+        content: {
+          "application/json; charset=utf-8": components["schemas"]["Transport"];
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          capacity: {
+            volume: number;
+            weight: number;
+          };
+          earliest_start?: string;
+          latest_end?: string;
+          start_address: components["schemas"]["Address"];
+          end_address: components["schemas"]["Address"];
         };
       };
     };

@@ -1,7 +1,7 @@
 import { createBooking, CreateBookingInput } from '../booking/engineAdapter'
 import { amqp } from '../amqp/connector'
 import { createTransport, CreateTransportInput } from '../transport/engineAdapter'
-describe('engine adapter', () => {
+xdescribe('engine adapter', () => {
 
   afterAll(() => amqp.close())
 

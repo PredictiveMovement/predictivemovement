@@ -1,5 +1,3 @@
-import { operations, components } from '../__generated__/schema'
-import { nanoid } from 'nanoid'
 import fetch from 'node-fetch'
 import polyline from 'polyline'
 const osrmUrl = process.env.OSRM_URL|| "https://osrm.iteamdev.io"
@@ -52,4 +50,4 @@ function decodePolyline(geometry:any) {
 
 
 
-export { getNearest, getRoute, decodePolyline } 
+export { getNearest, getRoute } 

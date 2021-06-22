@@ -25,7 +25,7 @@ describe('osrm', () => {
   })
 
   describe('#getRoute()', () => {
-    it('get nearest position', async () => {
+    it('get route', async () => {
         const positions ={from: {lat: 11.9795635, lon: 57.7027127}, to:{lat: 12.067781, lon: 57.753753 }  }
         const result = await getRoute(positions)
 

@@ -10,7 +10,6 @@ export type CreateTransportInput = operations['create_transport']['requestBody']
 export type Transport = components['schemas']['Transport']
 
 function engineTransportToAPI(input: EngineTransportRequest): Transport {
-
   return {
     id: input.id,
     earliest_start: input.earliest_start || '',
@@ -29,12 +28,14 @@ function engineTransportToAPI(input: EngineTransportRequest): Transport {
     },
     capacity: input.capacity && {
       weight: input.capacity.weight || 0,
-      volume: input.capacity.volume || 0
+      volume: input.capacity.volume || 0,
     },
   }
 }
 
-const createTransport = async (input: CreateTransportInput): Promise<Transport> => {
+const createTransport = async (
+  input: CreateTransportInput
+): Promise<Transport> => {
   const id = `pmt-${nanoid(8)}`
   await publishCreateTransport({
     id,
@@ -45,8 +46,8 @@ const createTransport = async (input: CreateTransportInput): Promise<Transport> 
       ...input.end_address.position,
     },
     capacity: {
-      ...input.capacity
-    }
+      ...input.capacity,
+    },
   })
 
   const answer = await waitForTransportCreated(id)
@@ -54,4 +55,4 @@ const createTransport = async (input: CreateTransportInput): Promise<Transport> 
   return engineTransportToAPI(answer)
 }
 
-export { createTransport } 
+export { createTransport }

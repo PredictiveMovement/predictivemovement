@@ -1,21 +1,21 @@
-import {amqp} from '../amqp/connector'
+import { amqp } from '../amqp/connector'
 import EventEmitter from 'events'
 
 export interface EngineBookingRequest {
-  id: string,
+  id: string
   pickup: {
-    lat: number,
+    lat: number
     lon: number
-  },
+  }
   delivery: {
-    lat: number,
+    lat: number
     lon: number
-  },
-  metadata: {},
+  }
+  metadata: {}
   size: {
-    weight?: number,
+    weight?: number
     measurements?: [number, number, number]
-  },
+  }
 }
 
 export interface EngineBooking extends EngineBookingRequest {
@@ -35,33 +35,32 @@ const publishCreateBooking = (booking: EngineBookingRequest) => {
     )
 }
 
-
 const emitter = new EventEmitter()
 
 amqp
-    .exchange('outgoing_booking_updates', 'topic', {
-      durable: true,
-    })
-    .queue('booking_notifications.api', {
-      durable: true,
-    })
-    .subscribe({ noAck: true }, '*')
-    .map((res: any) => {
-      const json = res.json()
-      return [res.fields.routingKey, json]
-    })
-    .each(([routingKey, msg]: [string, Object]) => {
-      emitter.emit(routingKey, msg)
-    })
+  .exchange('outgoing_booking_updates', 'topic', {
+    durable: true,
+  })
+  .queue('booking_notifications.api', {
+    durable: true,
+  })
+  .subscribe({ noAck: true }, '*')
+  .map((res: any) => {
+    const json = res.json()
+    return [res.fields.routingKey, json]
+  })
+  .each(([routingKey, msg]: [string, Object]) => {
+    emitter.emit(routingKey, msg)
+  })
 
 function waitForBookingCreated(bookingId: string): Promise<EngineBooking> {
   return new Promise((resolve, _reject) => {
     function listener(booking: EngineBooking) {
-        if (booking.id === bookingId) {
-          resolve(booking)
-          emitter.removeListener('new', listener)
-        }
+      if (booking.id === bookingId) {
+        resolve(booking)
+        emitter.removeListener('new', listener)
       }
+    }
     emitter.addListener('new', listener)
   })
 }

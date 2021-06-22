@@ -1,5 +1,5 @@
 {
-  "extends": ["@iteam/eslint-config-iteam-node"],
+  "extends": ["@iteam/eslint-config-node"],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
   "parserOptions": {
@@ -12,6 +12,7 @@
   "overrides": [
     {
       "files": ["**/*.ts"],
+      "excludedFiles": ["**/__tests__/*", "**/__generated__/*"],
       "rules": {
         "no-undef": "error",
         "no-unused-vars": "off",

@@ -38,16 +38,6 @@ const getRoute = async({from, to}: Positions) => {
       })
 }
 
-const getMatchingRoute = ((positions: Positions[]) => {
-  const coordinates = positions.map((pos: any) => [pos.position.lon, pos.position.lat].join(',')).join(';')
-  const timestamps = positions.map((pos: any) => Math.round(+pos.date / 1000)).join(';')
-  return fetch(`${osrmUrl}/match/v1/driving/${coordinates}?timestamps=${timestamps}&geometries=geojson&annotations=true&overview=full`) // Add annotations and steps to get each node speed
-    .then(response => response.json())
-    .then(route => {
-      return route
-    })
-})
-
 
 function decodePolyline(geometry:any) {
     return polyline
@@ -62,4 +52,4 @@ function decodePolyline(geometry:any) {
 
 
 
-export { getNearest, getRoute, decodePolyline, getMatchingRoute } 
+export { getNearest, getRoute, decodePolyline } 

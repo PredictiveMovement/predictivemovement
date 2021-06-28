@@ -11,12 +11,15 @@
     "dev": "nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'ts-node src/index.ts'",
     "generate-ts": "openapi-typescript spec/predictivemovement.yaml --output ./src/__generated__/schema.ts",
     "spec:test": "dredd spec/predictivemovement.yaml http://localhost:8000",
-    "build": "tsc"
+    "build": "tsc",
+    "prettier": "prettier -w '**/*.ts'",
+    "lint": "eslint '**/*.ts'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@iteam/eslint-config-node": "^0.3.0",
     "express": "^4.17.1",
     "express-openapi-validator": "^4.10.8",
     "fluent-amqp": "^0.4.1",
@@ -27,7 +30,6 @@
     "polyline": "^0.2.0"
   },
   "devDependencies": {
-    "@iteam/eslint-config-iteam-node": "^0.1.0",
     "@types/express": "^4.17.11",
     "@types/jest": "^26.0.23",
     "@types/morgan": "^1.9.2",

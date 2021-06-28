@@ -1,5 +1,5 @@
 {
-  "extends": ["@iteam/eslint-config-iteam-node"],
+  "extends": ["eslint:recommended"],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
   "parserOptions": {
@@ -9,11 +9,12 @@
     "ecmaVersion": 8,
     "sourceType": "module"
   },
+  "ignorePatterns": ["**/__tests__/*", "**/__generated__/*"],
+  "env": {"node": true},
   "overrides": [
     {
       "files": ["**/*.ts"],
       "rules": {
-        "no-undef": "error",
         "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": [
           "error",
@@ -25,12 +26,8 @@
             "varsIgnorePattern": "^_"
           }
         ],
-        "space-before-function-paren": "off",
-        "require-atomic-updates": "off"
+        "require-atomic-updates": "error"
       }
     }
   ],
-  "rules": {
-    "no-unexpected-multiline": "error"
-  }
 }

@@ -1,37 +1,49 @@
-import { getNearest, getRoute } from '../osrm/engineAdapter'
+import { getRoute } from '../osrm/engineAdapter'
+import nock from 'nock'
 
+const osrmUrl = process.env.OSRM_URL|| "https://osrm.iteamdev.io"
+
+import { decode } from 'polyline'
+jest.mock('polyline')
 
 describe('osrm', () => {
-  xdescribe('#getNearest()', () => {
-    it('get nearest position', async () => {
-        const position ={lat: 31.337, lon: 69.69 }
-        const result = await getNearest(position)
-
-        // {
-        //     waypoints: [
-        //       {
-        //         nodes: [Array],
-        //         location: [Array],
-        //         name: '',
-        //         distance: 4995458.421728,
-        //         hint: 'vPUKgMz1CoAQAAAAAAAAAJwAAAAAAAAAEdfDQQAAAABW3XFDAAAAABAAAAAAAAAAnAAAAAAAAACCAQAApbcYAaisZQOQYicEKCreAQUALwrXDdqG'
-        //       }
-        //     ],
-        //     code: 'Ok'
-        //   }
-
-        expect(result.waypoints).toBeDefined
-    })
-  })
-
   describe('#getRoute()', () => {
-    it('get route', async () => {
-        const positions ={from: {lat: 11.9795635, lon: 57.7027127}, to:{lat: 12.067781, lon: 57.753753 }  }
+    it('get route ...', async () => {
+      const scope = nock(osrmUrl)
+        .get(/\/route\/v1\/driving\/\S*/)
+        .reply(200, {
+          routes: [{
+            geometry: {
+              "coordinates": [
+                {
+                  "lat": 56.94274,
+                  "lon": 18.31072
+                },
+                {
+                  "lat": 56.94274,
+                  "lon": 18.31072
+                }
+              ]
+            }
+          }]
+        })
+        
+        ;(decode as jest.Mock).mockReturnValue([13, 37])
+
+        const positions = {from_lat: '11.9795635', from_lon: '57.7027127', to_lat: '12.067781', to_lon: '57.753753' }
         const result = await getRoute(positions)
 
-        expect(result).toBe(positions)
+        expect(decode).toBeCalledWith({"coordinates": [{"lat": 56.94274, "lon": 18.31072}, {"lat": 56.94274, "lon": 18.31072}]})
     })
   })
+  it('get route does nothing if routes is missing', async () => {
+    const scope = nock(osrmUrl)
+      .get(/\/route\/v1\/driving\/\S*/)
+      .reply(200, {})
+      
+      const positions = {from_lat: '11.9795635', from_lon: '57.7027127', to_lat: '12.067781', to_lon: '57.753753' }
+      const result = await getRoute(positions)
 
-  
+      expect(result).toEqual({})
+  })
 })

@@ -41,6 +41,7 @@
     "dredd": "^14.0.0",
     "eslint": "^7.18.0",
     "jest": "^27.0.1",
+    "nock": "^13.1.0",
     "nodemon": "^2.0.7",
     "openapi-typescript": "^3.2.3",
     "prettier": "^2.2.1",

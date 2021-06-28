@@ -8,14 +8,10 @@ export interface Position {
 }
 
 export interface Positions {
-from: {
-    lon: number
-    lat: number
-  },
-  to: {
-    lon: number
-    lat: number
-  }
+  from_lat: string
+  from_lon: string
+  to_lat: string
+  to_lon: string
 }
 
 const getNearest = async({lon,lat}: Position) => 
@@ -23,14 +19,14 @@ const getNearest = async({lon,lat}: Position) =>
 
 
 
-const getRoute = async({from, to}: Positions) => {
-  const coordinates = [[from.lon, from.lat], [to.lon, to.lat]].join(';')
+const getRoute = async({from_lat, from_lon, to_lat, to_lon}: Positions) => {
+  const coordinates = [[from_lon, from_lat], [to_lon, to_lat]].join(';')
+
   return await fetch(`${osrmUrl}/route/v1/driving/${coordinates}?steps=true&alternatives=true&overview=full&annotations=true`)
   .then((res) => res.json())
   .then(result => result.routes && result.routes.sort((a:any, b:any) => a.duration < b.duration)[0])
   .then(route => {
         if (!route) return {}
-
         route.geometry = { coordinates: decodePolyline(route.geometry) }
         return route
       })

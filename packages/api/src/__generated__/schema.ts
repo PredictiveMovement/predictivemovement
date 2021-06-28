@@ -4,87 +4,148 @@
  */
 
 export interface paths {
-  '/transports': {
-    get: operations['get_transports']
-    post: operations['create_transport']
-  }
-  '/itinerary/{transport_id}': {
-    get: operations['get_itinerary']
-  }
-  '/bookings': {
-    post: operations['create_booking']
-  }
+  "/transports": {
+    get: operations["get_transports"];
+    post: operations["create_transport"];
+  };
+  "/itinerary/{transport_id}": {
+    get: operations["get_itinerary"];
+  };
+  "/bookings": {
+    post: operations["create_booking"];
+  };
+  "/places/route": {
+    get: operations["get_route"];
+  };
 }
 
 export interface components {
   schemas: {
-    AnyValue: { [key: string]: any }
+    AnyValue: { [key: string]: any };
     Activity: {
-      id: string
-      booking_id: string
-      distance: number
-      duration: number
-      type: 'start' | 'end' | 'pickup' | 'delivery'
-      position: components['schemas']['Position']
-    }
+      id: string;
+      booking_id: string;
+      distance: number;
+      duration: number;
+      type: "start" | "end" | "pickup" | "delivery";
+      position: components["schemas"]["Position"];
+    };
     Address: {
-      city: string
-      street: string
-      name: string
-      position: components['schemas']['Position']
-    }
+      city: string;
+      street: string;
+      name: string;
+      position: components["schemas"]["Position"];
+    };
     Dimensions: {
-      width?: number
-      length?: number
-      height?: number
-    }
+      width?: number;
+      length?: number;
+      height?: number;
+    };
     Transport: {
-      id?: string
+      id?: string;
       capacity?: {
-        volume?: number
-        weight?: number
-      }
-      earliest_start?: string
-      latest_end?: string
-      start_address?: components['schemas']['Address']
-      end_address?: components['schemas']['Address']
-    }
+        volume?: number;
+        weight?: number;
+      };
+      earliest_start?: string;
+      latest_end?: string;
+      start_address?: components["schemas"]["Address"];
+      end_address?: components["schemas"]["Address"];
+    };
     Contact: {
-      name?: string
-      phone_number?: string
+      name?: string;
+      phone_number?: string;
       /** Extra information regarding sender or recipient */
-      info?: string
-    }
+      info?: string;
+    };
     Size: {
-      weight?: number
-      dimensions?: components['schemas']['Dimensions']
-    }
+      weight?: number;
+      dimensions?: components["schemas"]["Dimensions"];
+    };
+    Route: {
+      geometry?: components["schemas"]["Geometry"];
+      legs?: components["schemas"]["Leg"][];
+      distance?: number;
+      duration?: number;
+      weight_name?: string;
+      weight?: number;
+    };
+    Geometry: {
+      coordinates?: components["schemas"]["Coordinate"][];
+    };
+    Step: {
+      intersections?: components["schemas"]["Intersection"][];
+      driving_side?: string;
+      geometry?: string;
+      mode?: string;
+      duration?: number;
+      maneuver?: components["schemas"]["Maneuver"];
+      weight?: number;
+      distance?: number;
+      name?: string;
+    }[];
+    Intersection: {
+      out?: number;
+      entry?: boolean[];
+      bearings?: number[];
+      location?: number[];
+    };
+    Maneuver: {
+      bearing_after?: number;
+      location?: number[];
+      bearing_before?: number;
+      type?: string;
+    };
+    Coordinate: {
+      lat?: number;
+      lon?: number;
+    };
+    Leg: {
+      annotation?: components["schemas"]["Annotation"];
+      steps?: components["schemas"]["Step"][];
+      distance?: number;
+      duration?: number;
+      summary?: string;
+      weight?: number;
+    };
+    Annotation: {
+      metadata?: components["schemas"]["Metadata"];
+      nodes?: number[];
+      datasources?: number[];
+      speed?: number[];
+      weight?: number[];
+      duration?: number[];
+      distance?: number[];
+    };
+    Metadata: {
+      datasource_names?: string[];
+    };
     Booking: {
-      id: string
+      id: string;
       delivery: {
-        address?: components['schemas']['Address']
-      }
+        address?: components["schemas"]["Address"];
+      };
       pickup: {
-        address?: components['schemas']['Address']
-      }
-      size?: components['schemas']['Size']
-    }
+        address?: components["schemas"]["Address"];
+      };
+      size?: components["schemas"]["Size"];
+    };
     Position: {
-      lon: number
-      lat: number
-    }
-    Plan: { [key: string]: any }
+      lon: number;
+      lat: number;
+    };
+    Plan: { [key: string]: any };
     Itinerary: {
-      transport_id: string
-      route: { [key: string]: any }
-      activities: components['schemas']['Activity'][]
-    }
+      transport_id: string;
+      route: { [key: string]: any };
+      activities: components["schemas"]["Activity"][];
+    };
     ApiResponse: {
-      code?: number
-      type?: string
-      message?: string
-    }
-  }
+      code?: number;
+      type?: string;
+      message?: string;
+    };
+  };
 }
 
 export interface operations {
@@ -93,77 +154,99 @@ export interface operations {
       /** OK */
       200: {
         content: {
-          'application/json; charset=utf-8': components['schemas']['Transport'][]
-        }
-      }
-    }
-  }
+          "application/json; charset=utf-8": components["schemas"]["Transport"][];
+        };
+      };
+    };
+  };
   create_transport: {
     responses: {
       /** Created */
       201: {
         content: {
-          'application/json; charset=utf-8': components['schemas']['Transport']
-        }
-      }
-    }
+          "application/json; charset=utf-8": components["schemas"]["Transport"];
+        };
+      };
+    };
     requestBody: {
       content: {
-        'application/json': {
+        "application/json": {
           capacity: {
-            volume: number
-            weight: number
-          }
-          earliest_start?: string
-          latest_end?: string
-          start_address: components['schemas']['Address']
-          end_address: components['schemas']['Address']
-        }
-      }
-    }
-  }
+            volume: number;
+            weight: number;
+          };
+          earliest_start?: string;
+          latest_end?: string;
+          start_address: components["schemas"]["Address"];
+          end_address: components["schemas"]["Address"];
+        };
+      };
+    };
+  };
   get_itinerary: {
     parameters: {
       path: {
         /** ID of the transport to which the itinerary is assigned */
-        transport_id: string
-      }
-    }
+        transport_id: string;
+      };
+    };
     responses: {
       /** OK */
       200: {
         content: {
-          'application/json; charset=utf-8': components['schemas']['Itinerary']
-        }
-      }
-    }
-  }
+          "application/json; charset=utf-8": components["schemas"]["Itinerary"];
+        };
+      };
+    };
+  };
   create_booking: {
     responses: {
       /** Created */
       201: {
         content: {
-          'application/json; charset=utf-8': components['schemas']['Booking']
-        }
-      }
-    }
+          "application/json; charset=utf-8": components["schemas"]["Booking"];
+        };
+      };
+    };
     requestBody: {
       content: {
-        'application/json': {
+        "application/json": {
           pickup: {
-            address: components['schemas']['Address']
-            contact?: components['schemas']['Contact']
-          }
+            address: components["schemas"]["Address"];
+            contact?: components["schemas"]["Contact"];
+          };
           delivery: {
-            address: components['schemas']['Address']
-            contact?: components['schemas']['Contact']
-          }
-          size: components['schemas']['Size']
-          metadata?: components['schemas']['AnyValue']
+            address: components["schemas"]["Address"];
+            contact?: components["schemas"]["Contact"];
+          };
+          size: components["schemas"]["Size"];
+          metadata?: components["schemas"]["AnyValue"];
           /** An ID, eg. from PostNord, that correlates this booking to a 3rd party system's ID */
-          external_id?: string
-        }
-      }
-    }
-  }
+          external_id?: string;
+        };
+      };
+    };
+  };
+  get_route: {
+    parameters: {
+      query: {
+        /** Lat of the start position */
+        from_lat: number;
+        /** Lon of the start position */
+        from_lon: number;
+        /** Lat of the destination position */
+        to_lat: number;
+        /** Lon of the destination position */
+        to_lon: number;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json; charset=utf-8": components["schemas"]["Route"];
+        };
+      };
+    };
+  };
 }

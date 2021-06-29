@@ -2,6 +2,7 @@ import { Handler } from 'openapi-backend'
 import { createBooking } from './booking/engineAdapter'
 import { createTransport } from './transport/engineAdapter'
 import { operations } from './__generated__/schema'
+import { getRoute } from './osrm/engineAdapter'
 
 export const get_transports: Handler = (_c, _req, res) => {
   res.status(200).json([
@@ -69,4 +70,10 @@ export const create_transport: Handler = async (ctx, req, res) => {
   const requestBody: Body = ctx.request.requestBody
   const transport = await createTransport(requestBody)
   res.status(201).json(transport)
+}
+
+export const get_route: Handler = async (ctx, req, res) => {
+  let route = await getRoute(req.query)
+
+  res.status(200).json(route)
 }

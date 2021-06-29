@@ -48,10 +48,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - pm-api.iteamdev.io
+        - api-dev.predictivemovement.se
       secretName: api-prod-tls
   rules:
-    - host: pm-api.iteamdev.io
+    - host: api-dev.predictivemovement.se
       http:
         paths:
           - backend:

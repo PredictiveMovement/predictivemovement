@@ -4,39 +4,35 @@ metadata:
   name: pm-mapbox-test
 build:
   artifacts:
-    - image: iteam1337/pm-booking-interface # Disabled until needed again since we use the admin-ui for creating bookings
-      context: packages/booking-interface
-    - image: iteam1337/pm-driver-interface
-      context: packages/driver-interface
+    # - image: iteam1337/pm-booking-interface # Disabled until needed again since we use the admin-ui for creating bookings
+    #   context: packages/booking-interface
+    # - image: iteam1337/pm-driver-interface
+    #   context: packages/driver-interface
     - image: iteam1337/pm-engine
       context: packages/engine_umbrella
-      sync:
-        infer:
-          - "**/*.ex"
-          - "**/*.exs"
-    - image: iteam1337/pm-engine-server
-      context: packages/engine-server
-    - image: iteam1337/pm-engine-ui
-      context: packages/engine-ui
-      docker:
-        buildArgs:
-          REACT_APP_MAPBOX_ACCESS_TOKEN: "{{.REACT_APP_MAPBOX_ACCESS_TOKEN}}"
-          REACT_APP_ENGINE_SERVER: "{{.REACT_APP_ENGINE_SERVER}}"
+    # - image: iteam1337/pm-engine-server
+    #   context: packages/engine-server
+    # - image: iteam1337/pm-engine-ui
+    #   context: packages/engine-ui
+    #   docker:
+    #     buildArgs:
+    #       REACT_APP_MAPBOX_ACCESS_TOKEN: "{{.REACT_APP_MAPBOX_ACCESS_TOKEN}}"
+    #       REACT_APP_ENGINE_SERVER: "{{.REACT_APP_ENGINE_SERVER}}"
     - image: iteam1337/pm-route-optimization-jsprit
       context: packages/route-optimization-jsprit
-    - image: iteam1337/pm-vehicle-offer
-      context: packages/vehicle-offer
-    - image: iteam1337/pm-auto-accept-offer
-      context: packages/auto-accept-offer
-    - image: iteam1337/pm-booking-dispatcher
-      context: packages/booking-dispatcher
-    - image: iteam1337/pm-signing-ui
-      context: packages/signing-ui
-      docker:
-        buildArgs:
-          REACT_APP_ENGINE_SERVER: "{{.REACT_APP_ENGINE_SERVER}}"
-    - image: iteam1337/pm-extract-text-from-pic
-      context: packages/extract-text-from-pic
+    # - image: iteam1337/pm-vehicle-offer
+    #   context: packages/vehicle-offer
+    # - image: iteam1337/pm-auto-accept-offer
+    #   context: packages/auto-accept-offer
+    # - image: iteam1337/pm-booking-dispatcher
+    #   context: packages/booking-dispatcher
+    # - image: iteam1337/pm-signing-ui
+    #   context: packages/signing-ui
+    #   docker:
+    #     buildArgs:
+    #       REACT_APP_ENGINE_SERVER: "{{.REACT_APP_ENGINE_SERVER}}"
+    # - image: iteam1337/pm-extract-text-from-pic
+    #   context: packages/extract-text-from-pic
     - image: iteam1337/pm-api
       context: packages/api
 deploy:

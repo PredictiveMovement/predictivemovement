@@ -13,7 +13,8 @@
     "spec:test": "dredd spec/predictivemovement.yaml http://localhost:8000",
     "build": "tsc",
     "prettier": "prettier -w '**/*.ts'",
-    "lint": "eslint '**/*.ts'"
+    "lint": "eslint '**/*.ts'",
+    "start": "ts-node src/index.ts"
   },
   "keywords": [],
   "author": "",

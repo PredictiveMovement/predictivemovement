@@ -69,4 +69,4 @@ jobs:
        - name: Install modules
          run: npm i
        - name: Run tests
-         run: REQUEST_TIMEOUT=5000 npx dredd spec/predictivemovement.yaml http://api:8000
+         run: REQUEST_TIMEOUT=5000 npx dredd spec/predictivemovement.yaml http://127.0.0.1:8000

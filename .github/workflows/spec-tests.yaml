@@ -48,12 +48,12 @@ jobs:
         env:
           RABBITMQ_HOST: rabbitmq
           RABBITMQ_PORT: "5672"
-      # api: 
-      #   image: iteam1337/pm-api
-      #   ports:
-      #     - 8000:8000
-      #   env:
-      #     AMQP_URL: amqp://rabbitmq
+      api: 
+        image: iteam1337/pm-api
+        ports:
+          - 8000:8000
+        env:
+          AMQP_URL: amqp://rabbitmq
     steps:
        - uses: actions/checkout@v2
        - name: Install modules

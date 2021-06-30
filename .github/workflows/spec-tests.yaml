@@ -60,27 +60,3 @@ jobs:
          run: npm i
        - name: Run tests
          run: REQUEST_TIMEOUT=5000 npx dredd
-  # run-driver-interface-tests:
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: packages/driver-interface/
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Install modules
-  #       run: npm i
-  #     - name: Run tests
-  #       run: npm test
-  # run-engine-server-tests:
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: packages/engine-server/
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Install modules
-  #       run: npm i
-  #     - name: Run tests
-  #       run: npm test
-
-

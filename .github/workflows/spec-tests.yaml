@@ -48,18 +48,18 @@ jobs:
         env:
           RABBITMQ_HOST: rabbitmq
           RABBITMQ_PORT: "5672"
-      api: 
-        image: iteam1337/pm-api
-        ports:
-          - 8000:8000
-        env:
-          AMQP_URL: amqp://rabbitmq
+      # api: 
+      #   image: iteam1337/pm-api
+      #   ports:
+      #     - 8000:8000
+      #   env:
+      #     AMQP_URL: amqp://rabbitmq
     steps:
        - uses: actions/checkout@v2
        - name: Install modules
          run: npm i
        - name: Run tests
-         run: npm run spec:test
+         run: REQUEST_TIMEOUT=5000 npx dredd
   # run-driver-interface-tests:
   #   runs-on: ubuntu-latest
   #   defaults:

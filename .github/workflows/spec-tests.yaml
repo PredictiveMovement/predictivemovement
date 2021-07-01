@@ -64,6 +64,32 @@ jobs:
           - 8000:8000
         env:
           AMQP_URL: amqp://rabbitmq
+      engine:
+        image: iteam1337/pm-route-optimization-jsprit
+        options: --entrypoint /app/bin/engine_umbrella eval Engine.ReleaseTasks.init_event_store && /app/bin/engine_umbrella start
+        env:
+          AMQP_HOST: rabbitmq
+          AMQP_URL: amqp://rabbitmq
+          OSRM_URL: https://osrm.iteamdev.io
+          RABBITMQ_HOST: rabbitmq
+          RABBITMQ_PORT: 5672
+          POSTGRES_USER: postgres
+          POSTGRES_DB: eventstore
+          POSTGRES_HOST: postgres
+      # engine:
+      #   image: iteam1337/pm-route-optimization-jsprit
+      #   depends_on:
+      #     - engine-init-eventstore
+      #   env:
+      #     AMQP_HOST: rabbitmq
+      #     AMQP_URL: amqp://rabbitmq
+      #     OSRM_URL: https://osrm.iteamdev.io
+      #     RABBITMQ_HOST: rabbitmq
+      #     RABBITMQ_PORT: 5672
+      #     INIT_FROM_EVENTSTORE: false
+      #     POSTGRES_USER: postgres
+      #     POSTGRES_DB: eventstore
+      #     POSTGRES_HOST: postgres
     steps:
        - uses: actions/checkout@v2
        - name: Install modules

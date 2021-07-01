@@ -1,12 +1,18 @@
 name: Linter
 
+# on:
+#   pull_request:
+#     branches: 
+#       - main
+#   push: 
+#     branches: 
+#       - main
+# TODO: REVERT ME!!!
 on:
-  pull_request:
-    branches: 
-      - main
-  push: 
-    branches: 
-      - main
+  push:
+    branches: [master]
+
+
 
 jobs:
   lint:

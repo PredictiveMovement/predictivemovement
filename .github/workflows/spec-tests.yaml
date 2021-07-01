@@ -12,7 +12,7 @@ jobs:
       - name: Build api
         run: docker build packages/api --tag iteam1337/pm-api:$GITHUB_RUN_ID
       - name: Push api
-        run: docker push iteam1337/pm-apii:$GITHUB_RUN_ID
+        run: docker push iteam1337/pm-api:$GITHUB_RUN_ID
   build-and-push-engine:
     runs-on: ubuntu-latest
     steps:
@@ -20,9 +20,9 @@ jobs:
       - name: Login to DockerHub Registry
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build engine
-        run: docker build packages/engine-server --tag iteam1337/pm-enginei:$GITHUB_RUN_ID
+        run: docker build packages/engine-server --tag iteam1337/pm-engine:$GITHUB_RUN_ID
       - name: Push engine
-        run: docker push iteam1337/pm-enginei:$GITHUB_RUN_ID
+        run: docker push iteam1337/pm-engine:$GITHUB_RUN_ID
   # build-and-push-route-optimization:
   #   runs-on: ubuntu-latest
   #   steps:

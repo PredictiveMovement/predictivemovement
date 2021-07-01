@@ -59,7 +59,7 @@ jobs:
           RABBITMQ_HOST: rabbitmq
           RABBITMQ_PORT: "5672"
       api: 
-        image: iteam1337/pm-api:${{ GITHUB_RUN_ID }}
+        image: iteam1337/pm-api:$GITHUB_RUN_ID
         ports:
           - 8000:8000
         env:

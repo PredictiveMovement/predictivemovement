@@ -10,9 +10,9 @@ jobs:
       - name: Login to DockerHub Registry
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build api
-        run: docker build packages/api --tag iteam1337/pm-api:$GITHUB_RUN_ID
+        run: docker build packages/api --tag iteam1337/pm-api:latest
       - name: Push api
-        run: docker push iteam1337/pm-api:$GITHUB_RUN_ID
+        run: docker push iteam1337/pm-api:latest
   build-and-push-engine:
     runs-on: ubuntu-latest
     steps:
@@ -20,9 +20,9 @@ jobs:
       - name: Login to DockerHub Registry
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build engine
-        run: docker build packages/engine-server --tag iteam1337/pm-engine:$GITHUB_RUN_ID
+        run: docker build packages/engine-server --tag iteam1337/pm-engine:latest
       - name: Push engine
-        run: docker push iteam1337/pm-engine:$GITHUB_RUN_ID
+        run: docker push iteam1337/pm-engine:latest
   # build-and-push-route-optimization:
   #   runs-on: ubuntu-latest
   #   steps:
@@ -30,9 +30,9 @@ jobs:
   #     - name: Login to DockerHub Registry
   #       run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
   #     - name: Build route-optimization-image
-  #       run: docker build packages/route-optimization-jsprit --tag iteam1337/pm-route-optimization-jsprit:$GITHUB_RUN_ID
+  #       run: docker build packages/route-optimization-jsprit --tag iteam1337/pm-route-optimization-jsprit:latest
   #     - name: Push route-optimization-image
-  #       run: docker push iteam1337/pm-route-optimization-jsprit:$GITHUB_RUN_ID
+  #       run: docker push iteam1337/pm-route-optimization-jsprit:latest
   run-api-spec-test:
     needs: [build-and-push-api, build-and-push-engine]
     env:
@@ -59,7 +59,7 @@ jobs:
           RABBITMQ_HOST: rabbitmq
           RABBITMQ_PORT: "5672"
       api: 
-        image: iteam1337/pm-api:$GITHUB_RUN_ID
+        image: iteam1337/pm-api
         ports:
           - 8000:8000
         env:

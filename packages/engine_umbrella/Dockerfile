@@ -26,6 +26,4 @@ COPY --from=build /app/_build/prod/rel/engine_umbrella .
 
 
 #Set default entrypoint and command
-# ENTRYPOINT ["/app/bin/engine_umbrella"]
-# CMD ["start"]
 CMD ["sh", "-c", "/app/bin/engine_umbrella eval \"Engine.ReleaseTasks.init_event_store\" && /app/bin/engine_umbrella start"]

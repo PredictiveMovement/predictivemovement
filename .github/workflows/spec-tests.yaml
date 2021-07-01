@@ -81,10 +81,10 @@ jobs:
        - uses: actions/checkout@v2
        - name: Install modules
          run: npm i
-      #  - name: Run tests
-      #    run: REQUEST_TIMEOUT=5000 npx dredd spec/predictivemovement.yaml http://127.0.0.1:8000
        - name: test localhost
          run: curl http://127.0.0.1:8000/docs
+       - name: Run tests
+         run: REQUEST_TIMEOUT=5000 npx dredd spec/predictivemovement.yaml http://127.0.0.1:8000
        - name: Docker ps   
          run: docker ps
        - name: Docker logs

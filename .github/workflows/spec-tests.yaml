@@ -20,7 +20,7 @@ jobs:
       - name: Login to DockerHub Registry
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build engine
-        run: docker build packages/engine_umbrella --tag iteam1337/pm-engine:latest
+        run: docker build packages/engine_umbrella --tag iteam1337/pm-engine:latest --cache-from iteam1337/pm-engine:latest
       - name: Push engine
         run: docker push iteam1337/pm-engine:latest
   build-and-push-route-optimization:
@@ -30,7 +30,7 @@ jobs:
       - name: Login to DockerHub Registry
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build route-optimization-image
-        run: docker build packages/route-optimization-jsprit --tag iteam1337/pm-route-optimization-jsprit:latest
+        run: docker build packages/route-optimization-jsprit --tag iteam1337/pm-route-optimization-jsprit:latest  --cache-from iteam1337/pm-route-optimization-jsprit:latest
       - name: Push route-optimization-image
         run: docker push iteam1337/pm-route-optimization-jsprit:latest
   run-api-spec-test:

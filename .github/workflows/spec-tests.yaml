@@ -65,8 +65,7 @@ jobs:
         env:
           AMQP_URL: amqp://rabbitmq
       engine:
-        image: iteam1337/pm-route-optimization-jsprit
-        options: --entrypoint /app/bin/engine_umbrella eval Engine.ReleaseTasks.init_event_store && /app/bin/engine_umbrella start
+        image: iteam1337/pm-engine
         env:
           AMQP_HOST: rabbitmq
           AMQP_URL: amqp://rabbitmq

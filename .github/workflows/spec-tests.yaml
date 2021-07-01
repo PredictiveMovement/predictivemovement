@@ -13,16 +13,16 @@ jobs:
   #       run: docker build packages/api --tag iteam1337/pm-api:latest
   #     - name: Push api
   #       run: docker push iteam1337/pm-api:latest
-  # build-and-push-engine:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Login to DockerHub Registry
-  #       run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
-  #     - name: Build engine
-  #       run: docker build packages/engine-server --tag iteam1337/pm-engine:latest
-  #     - name: Push engine
-  #       run: docker push iteam1337/pm-engine:latest
+  build-and-push-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to DockerHub Registry
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build engine
+        run: docker build packages/engine_umbrella --tag iteam1337/pm-engine:latest
+      - name: Push engine
+        run: docker push iteam1337/pm-engine:latest
   # build-and-push-route-optimization:
   #   runs-on: ubuntu-latest
   #   steps:
@@ -92,10 +92,10 @@ jobs:
       #     POSTGRES_HOST: postgres
     steps:
        - uses: actions/checkout@v2
-      #  - name: Install modules
-      #    run: npm i
+       - name: Install modules
+         run: npm i
        - name: Run tests
-         run: docker ps
-       - name: Docker logs
-         run: docker logs pm-engine
-        #  run: REQUEST_TIMEOUT=5000 npx dredd spec/predictivemovement.yaml http://127.0.0.1:8000
+      #    run: docker ps
+      #  - name: Docker logs
+      #    run: docker logs pm-engine
+         run: REQUEST_TIMEOUT=5000 npx dredd spec/predictivemovement.yaml http://127.0.0.1:8000

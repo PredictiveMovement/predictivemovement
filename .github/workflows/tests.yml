@@ -1,6 +1,10 @@
 name: Test suite
 
-on: [pull_request]
+# on: [pull_request]
+# TODO: REVERT ME!!!
+on:
+  push:
+    branches: [master]
 
 jobs:
   build-and-push-route-optimization:

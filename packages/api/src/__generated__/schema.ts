@@ -6,12 +6,16 @@
 export interface paths {
   "/transports": {
     get: operations["get_transports"];
+    post: operations["create_transport"];
   };
   "/itinerary/{transport_id}": {
     get: operations["get_itinerary"];
   };
   "/bookings": {
     post: operations["create_booking"];
+  };
+  "/places/route": {
+    get: operations["get_route"];
   };
 }
 
@@ -38,15 +42,13 @@ export interface components {
       height?: number;
     };
     Transport: {
-      transport_id?: string;
-      busy?: boolean;
+      id?: string;
       capacity?: {
         volume?: number;
         weight?: number;
       };
       earliest_start?: string;
       latest_end?: string;
-      metadata?: { [key: string]: any };
       start_address?: components["schemas"]["Address"];
       end_address?: components["schemas"]["Address"];
     };
@@ -59,6 +61,64 @@ export interface components {
     Size: {
       weight?: number;
       dimensions?: components["schemas"]["Dimensions"];
+    };
+    Route: {
+      geometry?: components["schemas"]["Geometry"];
+      legs?: components["schemas"]["Leg"][];
+      distance?: number;
+      duration?: number;
+      weight_name?: string;
+      weight?: number;
+    };
+    Geometry: {
+      coordinates?: components["schemas"]["Coordinate"][];
+    };
+    Step: {
+      intersections?: components["schemas"]["Intersection"][];
+      driving_side?: string;
+      geometry?: string;
+      mode?: string;
+      duration?: number;
+      maneuver?: components["schemas"]["Maneuver"];
+      weight?: number;
+      distance?: number;
+      name?: string;
+    }[];
+    Intersection: {
+      out?: number;
+      entry?: boolean[];
+      bearings?: number[];
+      location?: number[];
+    };
+    Maneuver: {
+      bearing_after?: number;
+      location?: number[];
+      bearing_before?: number;
+      type?: string;
+    };
+    Coordinate: {
+      lat?: number;
+      lon?: number;
+    };
+    Leg: {
+      annotation?: components["schemas"]["Annotation"];
+      steps?: components["schemas"]["Step"][];
+      distance?: number;
+      duration?: number;
+      summary?: string;
+      weight?: number;
+    };
+    Annotation: {
+      metadata?: components["schemas"]["Metadata"];
+      nodes?: number[];
+      datasources?: number[];
+      speed?: number[];
+      weight?: number[];
+      duration?: number[];
+      distance?: number[];
+    };
+    Metadata: {
+      datasource_names?: string[];
     };
     Booking: {
       id: string;
@@ -95,6 +155,30 @@ export interface operations {
       200: {
         content: {
           "application/json; charset=utf-8": components["schemas"]["Transport"][];
+        };
+      };
+    };
+  };
+  create_transport: {
+    responses: {
+      /** Created */
+      201: {
+        content: {
+          "application/json; charset=utf-8": components["schemas"]["Transport"];
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          capacity: {
+            volume: number;
+            weight: number;
+          };
+          earliest_start?: string;
+          latest_end?: string;
+          start_address: components["schemas"]["Address"];
+          end_address: components["schemas"]["Address"];
         };
       };
     };
@@ -139,6 +223,28 @@ export interface operations {
           metadata?: components["schemas"]["AnyValue"];
           /** An ID, eg. from PostNord, that correlates this booking to a 3rd party system's ID */
           external_id?: string;
+        };
+      };
+    };
+  };
+  get_route: {
+    parameters: {
+      query: {
+        /** Lat of the start position */
+        from_lat: number;
+        /** Lon of the start position */
+        from_lon: number;
+        /** Lat of the destination position */
+        to_lat: number;
+        /** Lon of the destination position */
+        to_lon: number;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json; charset=utf-8": components["schemas"]["Route"];
         };
       };
     };

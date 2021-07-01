@@ -1,0 +1,22 @@
+name: Linter
+
+on:
+  pull_request:
+    branches: 
+      - main
+  push: 
+    branches: 
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/api/
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install modules
+      run: npm install
+    - name: Run ESLint
+      run: npm run lint

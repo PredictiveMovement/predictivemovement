@@ -60,6 +60,7 @@ jobs:
           RABBITMQ_PORT: "5672"
       api: 
         image: iteam1337/pm-api
+        options: --name pm-api
         ports:
           - 8000:8000
         env:
@@ -87,4 +88,4 @@ jobs:
        - name: Docker ps   
          run: docker ps
        - name: Docker logs
-         run: docker logs pm-engine
+         run: docker logs pm-api

@@ -3,16 +3,16 @@ name: Spec tests
 on: [pull_request]
 
 jobs:
-  # build-and-push-api:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Login to DockerHub Registry
-  #       run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
-  #     - name: Build api
-  #       run: docker build packages/api --tag iteam1337/pm-api:latest
-  #     - name: Push api
-  #       run: docker push iteam1337/pm-api:latest
+  build-and-push-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to DockerHub Registry
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build api
+        run: docker build packages/api --tag iteam1337/pm-api:latest
+      - name: Push api
+        run: docker push iteam1337/pm-api:latest
   build-and-push-engine:
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +34,7 @@ jobs:
   #     - name: Push route-optimization-image
   #       run: docker push iteam1337/pm-route-optimization-jsprit:latest
   run-api-spec-test:
-    # needs: [build-and-push-api, build-and-push-engine]
+    needs: [build-and-push-api, build-and-push-engine]
     env:
       AMQP_HOST: localhost
     defaults:
@@ -76,26 +76,15 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_DB: eventstore
           POSTGRES_HOST: postgres
-      # engine:
-      #   image: iteam1337/pm-route-optimization-jsprit
-      #   depends_on:
-      #     - engine-init-eventstore
-      #   env:
-      #     AMQP_HOST: rabbitmq
-      #     AMQP_URL: amqp://rabbitmq
-      #     OSRM_URL: https://osrm.iteamdev.io
-      #     RABBITMQ_HOST: rabbitmq
-      #     RABBITMQ_PORT: 5672
-      #     INIT_FROM_EVENTSTORE: false
-      #     POSTGRES_USER: postgres
-      #     POSTGRES_DB: eventstore
-      #     POSTGRES_HOST: postgres
     steps:
        - uses: actions/checkout@v2
        - name: Install modules
          run: npm i
-       - name: Run tests
-      #    run: docker ps
-      #  - name: Docker logs
-      #    run: docker logs pm-engine
-         run: REQUEST_TIMEOUT=5000 npx dredd spec/predictivemovement.yaml http://127.0.0.1:8000
+      #  - name: Run tests
+      #    run: REQUEST_TIMEOUT=5000 npx dredd spec/predictivemovement.yaml http://127.0.0.1:8000
+       - name: test localhost
+         run: curl http://127.0.0.1:8000
+       - name: Docker ps   
+         run: docker ps
+       - name: Docker logs
+         run: docker logs pm-engine

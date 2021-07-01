@@ -66,6 +66,7 @@ jobs:
           AMQP_URL: amqp://rabbitmq
       engine:
         image: iteam1337/pm-engine
+        options: --name pm-engine
         env:
           AMQP_HOST: rabbitmq
           AMQP_URL: amqp://rabbitmq
@@ -94,5 +95,5 @@ jobs:
       #  - name: Install modules
       #    run: npm i
        - name: Run tests
-         run: curl
+         run: curl http://127.0.0.1:8000
         #  run: REQUEST_TIMEOUT=5000 npx dredd spec/predictivemovement.yaml http://127.0.0.1:8000

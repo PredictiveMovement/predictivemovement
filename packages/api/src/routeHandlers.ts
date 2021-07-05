@@ -3,6 +3,9 @@ import { createBooking } from './booking/engineAdapter'
 import { createTransport } from './transport/engineAdapter'
 import { operations } from './__generated__/schema'
 import { getRoute } from './osrm/engineAdapter'
+const REQUEST_TIMEOUT = process.env.REQUEST_TIMEOUT
+  ? parseInt(process.env.REQUEST_TIMEOUT, 10)
+  : 60 * 1000
 
 export const get_transports: Handler = (_c, _req, res) => {
   res.status(200).json([
@@ -59,6 +62,8 @@ export const get_itinerary: Handler = (c, _req, res) => {
 }
 
 export const create_booking: Handler = async (ctx, req, res) => {
+  req.setTimeout(REQUEST_TIMEOUT)
+
   type Body = operations['create_booking']['requestBody']['content']['application/json']
   const requestBody: Body = ctx.request.requestBody
   const booking = await createBooking(requestBody)
@@ -66,6 +71,8 @@ export const create_booking: Handler = async (ctx, req, res) => {
 }
 
 export const create_transport: Handler = async (ctx, req, res) => {
+  req.setTimeout(REQUEST_TIMEOUT)
+
   type Body = operations['create_transport']['requestBody']['content']['application/json']
   const requestBody: Body = ctx.request.requestBody
   const transport = await createTransport(requestBody)

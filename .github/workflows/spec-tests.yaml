@@ -1,0 +1,83 @@
+name: Spec tests
+
+on: [pull_request]
+
+jobs:
+  build-and-push-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to DockerHub Registry
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build api
+        run: docker build packages/api --tag iteam1337/pm-api:latest
+      - name: Push api
+        run: docker push iteam1337/pm-api:latest
+  build-and-push-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to DockerHub Registry
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build engine
+        run: docker build packages/engine_umbrella --tag iteam1337/pm-engine:latest --cache-from iteam1337/pm-engine:latest
+      - name: Push engine
+        run: docker push iteam1337/pm-engine:latest
+  build-and-push-route-optimization:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to DockerHub Registry
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build route-optimization-image
+        run: docker build packages/route-optimization-jsprit --tag iteam1337/pm-route-optimization-jsprit:latest  --cache-from iteam1337/pm-route-optimization-jsprit:latest
+      - name: Push route-optimization-image
+        run: docker push iteam1337/pm-route-optimization-jsprit:latest
+  run-api-spec-test:
+    needs: [build-and-push-api, build-and-push-engine, build-and-push-route-optimization]
+    env:
+      AMQP_HOST: localhost
+    defaults:
+      run:
+        working-directory: packages/api/
+    runs-on: ubuntu-latest
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+      route-optmization-jsprit:
+        image: iteam1337/pm-route-optimization-jsprit
+        env:
+          RABBITMQ_HOST: rabbitmq
+          RABBITMQ_PORT: "5672"
+      api: 
+        image: iteam1337/pm-api
+        ports:
+          - 8000:8000
+        env:
+          AMQP_URL: amqp://rabbitmq
+      engine:
+        image: iteam1337/pm-engine
+        env:
+          AMQP_HOST: rabbitmq
+          AMQP_URL: amqp://rabbitmq
+          OSRM_URL: https://osrm.iteamdev.io
+          RABBITMQ_HOST: rabbitmq
+          RABBITMQ_PORT: 5672
+          POSTGRES_USER: postgres
+          POSTGRES_DB: eventstore
+          POSTGRES_HOST: postgres
+    steps:
+       - uses: actions/checkout@v2
+       - name: Install modules
+         run: npm i
+       - name: Run tests
+         run: REQUEST_TIMEOUT=5000 npx dredd spec/predictivemovement.yaml http://127.0.0.1:8000

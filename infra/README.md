@@ -94,7 +94,7 @@
 
   #### k8s/base/dependencies and k8s/dependencies-prod
 
-  - this was a try at trying to use `kustomize` for separating the resource files for `dependencies` (minio, postgres, rabbitmq, redis...)
+  - this was an attempt at trying to use `kustomize` for separating the resource files for `dependencies` (minio, postgres, rabbitmq, redis...)
   - it has it's own `skaffold` command defined further down
   - since majority of databases are defined using a `StatefulSet` this approach with `kustomize` and `skaffold` works best when you setup the cluster from scratch. 
   - an issue with this approach instead of using plain `kubectl apply -f` commands is that when you want to add a new database in the mix, you would create the yaml file, add it to the `kustomization` file and then you want to run the `skaffold` command

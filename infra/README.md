@@ -41,7 +41,7 @@
 - `pelias` folder contains everything for pelias
 - `base` folder contains `dependencies` (databases) and `stack` (applications) that are deployed to `predictivemovement-dev`
 - `overlay` folder contains `dependencies-prod` (databases) and `stack-prod` (applications) that use the corresponding folder from `base` and extend it and then are deployed to `predictivemovement` namespace
-> NOTE: In other words the `dev` environment config is the default, and `prod` is a changed version of it
+> NOTE: Read me about our use of Kustomize overlays below
 
 #### k8s secrets
 
@@ -67,16 +67,21 @@
 - The current flows are:
   - `main` that runs on the `main` branch and will install dependencies (kubectl, skaffold) and run `skaffold run` command 
   - `test` runs on a pull request and runs all tests in different packages
-> NOTE: We have credentials for a service account for Docker in LastPass. Add them as secrets in Github (DOCKER_USER, DOCKER_PASSWORD)
 
-> NOTE: About the kube config used to connect to the cluster
+#### Docker service account
+We have credentials for a service account for Docker in LastPass. Add them as secrets in Github.
+- DOCKER_USER
+- DOCKER_PASSWORD
+
+#### kube config for connecting to cluster
 - in the `main.yml` workflow we replace placeholder values from the config defined in `k8s/config.yaml`
-- the values used are stored as secrets in Github
-  - KUBE_CLUSTER_NAME (a suggestive name, doesn't affect connectivity)
+- the replacement values are stored in the following Github secrets
+  - KUBE_CLUSTER_NAME (doesn't affect connectivity)
   - KUBE_CLUSTER_SERVER (replace with external IP of the cluster so that github can connect to it)
   - KUBE_CLUSTER_CERTIFICATE (replace with certificate that is trusted for the external IP)
   - KUBE_USER_NAME (replace with value `service-account`)
-  - KUBE_USER_TOKEN (retrieve this with `kubectl get secrets` (to list secrets) and `kubectl get secrets <secret name> -o yaml` (to see the contents of the secret) by checking the secret created for the service account created from `k8s/cicd-rbac.yaml`)
+  - KUBE_USER_TOKEN (Find the name of the secret with `kubectl get secrets --all-namespaces` and look for something like "cicd", then the get the secret using `kubectl get secrets <secret name> -o yaml`)
+  - > NOTE: kubectl gives you the secret base64-encoded, you might need to decode it
 
 ### Kustomize
 
@@ -90,17 +95,14 @@
 
   #### prod
   - for the `prod` environment we define everything in `k8s/overlays/stack-prod`
-  - the `kustomization.yaml` inside this reuses the base from `k8s/base/stack` and extends that with some customizations like [patchStrategicMerge](https://kubectl.docs.kubernetes.io/references/kustomize/glossary/#patchstrategicmerge) that allows us to duplicate less code (like the Ingress that should have a different URL between different environments), use a different namespace and define only different properties than the ones in `dev` with the [configMapGenerator](https://github.com/kubernetes-sigs/kustomize/blob/master/examples/configGeneration.md)
+  - the `kustomization.yaml` inside this reuses the base from `k8s/base/stack` and extends that with some customizations like [patchStrategicMerge](https://kubectl.docs.kubernetes.io/references/kustomize/glossary/#patchstrategicmerge) that allows us to duplicate less code (like the Ingress that should have a different URL between different environments), use a different namespace and define only properties that differ from the ones in `dev` with the [configMapGenerator](https://github.com/kubernetes-sigs/kustomize/blob/master/examples/configGeneration.md)
 
 
   #### k8s/base/dependencies and k8s/dependencies-prod
 
-  - this was a try at trying to use `kustomize` for separating the resource files for `dependencies` (minio, postgres, rabbitmq, redis...)
-  - it has it's own `skaffold` command defined further down
-  - since majority of databases are defined using a `StatefulSet` this approach with `kustomize` and `skaffold` works best when you setup the cluster from scratch. 
-  - an issue with this approach instead of using plain `kubectl apply -f` commands is that when you want to add a new database in the mix, you would create the yaml file, add it to the `kustomization` file and then you want to run the `skaffold` command
- 
-    due to statefulsets not allowing some updates, the `skaffold` command will return errors for them, although it should successfully apply new configuration and it should create your new database.
+  - We use `kustomize` to separate the resource files for `dependencies` (minio, postgres, rabbitmq, redis...)
+  - Since majority of our database configs are defined using `StatefulSet`, this approach with `kustomize` and `skaffold` works best when you setup the cluster from scratch. 
+ > NOTE: An issue with this approach (rather than using plain `kubectl apply -f` commands) is that when you want to add a new database, and create the yaml file, add it to the `kustomization` file and run the `skaffold` command, you might get error due to statefulsets not allowing some updates. It should still successfully apply the new configuration and create your new database.
 
 ### Skaffold
 
@@ -112,34 +114,23 @@
 
   this means the skaffold commands can be run with `--profile prod`
 
-- when `skaffold` runs, if a Docker repository doesn't exist, it will create it as long as the Docker user logged in on the system where it runs has access to it;
+- when `skaffold` runs, if a Docker repository doesn't exist, it will create it as long as the Docker user logged in has permission to do that
 
-  this means that for Github Actions, we have to go inside Dockerhub website and update permissions of existing repositories or create the repository manually and update the permissions to allow the service account to have access to read/write since (it's not an owner so it doesn't have them for new repositories)
+  this means that for Github Actions, you need to go the Dockerhub website and either update permissions for the repository or create the repository and change permissions to give the service account read/write access
 
-- `skaffold` allows you to debug code by running `skaffold dev` (see it like `nodemon` and you run the code in the cluster you are currently connected to)
-  > NOTE: when you exit the `skaffold dev` command it will cleanup all resources created so DO NOT RUN THIS ON prod
-
-  #### dev
-
-  To deploy the dependencies of the stack (databases and usually it's done once and) to your Kubernetes cluster, use Skaffold:
-
-  ```
-  skaffold -f skaffold-dependencies.yaml run
-  ```
-
-  To deploy to `dev` run
-
-  ```
-  skaffold run
-  ```
+- `skaffold` allows you to debug code by running `skaffold dev` (it's like a `nodemon` which runs the code in the cluster you are currently connected to)
+  > NOTE: When you exit `skaffold dev` it will cleanup all resources created so **DO NOT RUN THIS ON prod**
+  
+  > NOTE: No instructions for deploying `dev` as that is done by Github actions (see above)
+  
   #### prod
 
-  To deploy the dependencies of the stack (usually done once and it's DBs) to your Kubernetes cluster, use Skaffold:
+  To deploy the dependencies of the stack (ie. databases)
+  ```
+  skaffold -f skaffold-dependencies.yaml run --profile prod
+  ```
 
-      skaffold -f skaffold-dependencies.yaml run --profile prod
-
-  Set environment variables that are used by Docker at build time (for the UI) and run the skaffold command with a profile:
-
+  Set environment variables used at build time by Docker and run the skaffold command with production profile:
   ```sh
   export REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
   export REACT_APP_ENGINE_SERVER=https://engine-server.iteamdev.io
@@ -150,27 +141,24 @@
 
 We use [postgres-backup](https://github.com/alexanderczigler/docker/tree/master/postgres-backup)
 
-To restore a backup exec into the `postgres-backup` pod
-
+To restore a backup, exec into the `postgres-backup` pod
 ```bash
 kubectl exec -it postgres-backup /bin/bash
-
+```
+And run
+```bash
 /restore.sh /backup/latest.psql.gz # or choose a different backup you want
 ```
 
-### application specific k8s quirks
+### Application specific k8s quirks
 
   #### Pelias
 
-  - the csv-importer requires that data from Lantmäteriet to be available on the node at path `/storage/lantmateriet/csv`
-  - to deploy run `kubectl apply -f k8s/pelias`
-  
-  #### Engine migrations
-
-  - the engine (`k8s/base/stack/engine.yaml`) has an init container that runs migrations for EventStore
+  - The csv-importer.yaml requires data from Lantmäteriet to be available on the node on the folder `/storage/lantmateriet/csv/` (it will read \*.csv)
+  - To deploy `kubectl apply -f k8s/pelias`
 
   #### OSRM
   
-  - it's currently only added inside `k8s/overlays/dependencies-prod` and is being deployed only to `prod` and we use this instance everywhere (from localhost, dev, prod)
+  - Is currently only inside `k8s/overlays/dependencies-prod` and deployed only to `prod` but used from localhost, dev, prod
 
-  > NOTE: perhaps it makes sense to move osrm to its own namespace instead of having it in `predictivemovement`
+  > NOTE: OSRM should probably be moved to its own namespace FIXME

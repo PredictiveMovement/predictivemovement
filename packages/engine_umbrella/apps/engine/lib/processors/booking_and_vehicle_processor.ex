@@ -1,4 +1,4 @@
-defmodule Engine.BookingProcessor do
+defmodule Engine.BookingAndVehicleProcessor do
   use Broadway
   alias Broadway.Message
   require Logger
@@ -13,12 +13,6 @@ defmodule Engine.BookingProcessor do
       processors: [
         default: [
           concurrency: 100
-        ]
-      ],
-      batchers: [
-        default: [
-          batch_size: Application.get_env(:engine, :booking_processor_batch_size),
-          batch_timeout: Application.get_env(:engine, :booking_processor_batch_timeout)
         ]
       ]
     )
@@ -46,7 +40,11 @@ defmodule Engine.BookingProcessor do
 
   def handle_message(
         _processor,
-        %Message{data: %{vehicle: vehicle}} = msg,
+        %Message{
+          data: %{
+            vehicle: vehicle
+          }
+        } = msg,
         _context
       ) do
     id =
@@ -57,20 +55,6 @@ defmodule Engine.BookingProcessor do
 
     Logger.info("Vehicle with id: #{id} created")
     msg
-  end
-
-  def handle_batch(
-        _batcher,
-        messages,
-        _batch_info,
-        _context
-      ) do
-    IO.puts("a new batch of data")
-    booking_ids = Engine.BookingStore.get_bookings()
-    vehicle_ids = Engine.VehicleStore.get_vehicles()
-
-    Plan.calculate(vehicle_ids, booking_ids)
-    messages
   end
 
   defp string_to_vehicle_transform(vehicle_string) do

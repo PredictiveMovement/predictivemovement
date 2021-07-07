@@ -90,6 +90,11 @@ or in the case of the add_transport; a keyword list can also be used containing 
 
 **Design mockup:** [Figma](https://www.figma.com/file/DdBjpoKd0T9OkWmhlpd48Nfa/Predictive-Movement)
 
+
+### Infrastructure
+
+The documentation about our cloud infrastructure and tools used is available [here](./infra/README.md)
+
 ---
 
 ## Vocabulary

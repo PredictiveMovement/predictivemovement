@@ -5,33 +5,33 @@
 - We use Kubernetes and all resources are located in [k8s folder](../k8s)
 - We use [Skaffold](https://skaffold.dev/docs/) to handle the workflow for building, pushing and deploying our applications
 - We use [Kustomize](https://kustomize.io/) for easier separation between different environments and less code duplication for Kubernetes resources
-- We use [Github actions](../.github) for automating our dev releases to what we call the `dev environment`
-- We make manual releases to what we call the `prod environment` using the `skaffold run` command described further down
+- We use [Github actions](../.github) for automatic releases to the `dev environment`
+- We make manual releases to the `prod environment` using `skaffold run`, described further down
 
 ### Tools you will need locally for working with the cluster
 
-- [docker installed](https://docs.docker.com/engine/install/)
-- [kubectl installed](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-- [skaffold installed](https://skaffold.dev/docs/install/)
-- [kustomize installed](https://kubernetes-sigs.github.io/kustomize/installation/)
-- [kubectx + kubens](https://github.com/ahmetb/kubectx) (not needed, just being opinionated and saying that it's nice to use)
+- [docker](https://docs.docker.com/engine/install/)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+- [skaffold](https://skaffold.dev/docs/install/)
+- [kustomize](https://kubernetes-sigs.github.io/kustomize/installation/)
+- [kubectx + kubens](https://github.com/ahmetb/kubectx) (not needed but highly recommended)
 
 ### Kubernetes resources structure
 
 - We use our own Kubernetes cluster, more information how to connect to it you can get in the [drift Slack channel](https://iteamsolutions.slack.com/archives/C02LSCREN)
 - All resources are located in [k8s folder](../k8s)
-- We use [Namespaces](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) for different environments
-- The namespaces that we use are:
-  - `predictivemovement` for `prod` (https://admin.predictivemovement.se)
+- We use [kubernetes namespaces](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) to separate environments
+- The namespaces we use are:
+  - `predictivemovement` for `prod` available at (https://admin.predictivemovement.se)
   - `predictivemovement-dev` for `dev`
   - `pelias` for all [Pelias](https://github.com/pelias/pelias) services that we use
-  - `predictivemovement-se` for https://predictivemovement.se
+  - `predictivemovement-se` for the website https://predictivemovement.se
 
-> NOTE: At the time of writing this:
+> NOTE: At the time of writing (2021-07-07)
 > - we use the cluster at 192.168.100.90
 > - we have only the `predictivemovement` and `predictivemovement-se` namespaces setup
-> - `predictivemovement-dev` namespace and github-actions are not configured towards this cluster mentioned above
-> - the k8s resources for https://predictivemovement.se were not added to this repository when it has been setup
+> - `predictivemovement-dev` namespace and github-actions are not configured as mentioned above FIXME
+> - the k8s resources for https://predictivemovement.se were not added to this repository FIXME
 
 #### k8s folder description
 
@@ -41,6 +41,7 @@
 - `pelias` folder contains everything for pelias
 - `base` folder contains `dependencies` (databases) and `stack` (applications) that are deployed to `predictivemovement-dev`
 - `overlay` folder contains `dependencies-prod` (databases) and `stack-prod` (applications) that use the corresponding folder from `base` and extend it and then are deployed to `predictivemovement` namespace
+> NOTE: In other words the `dev` environment config is the default, and `prod` is a changed version of it
 
 #### k8s secrets
 
@@ -58,17 +59,17 @@
   kubectl create secret generic ui-basic-auth --from-file=auth
   ```
 
-> NOTE: How to create the auth file https://imti.co/kubernetes-ingress-basic-auth/
+> NOTE: Learn to create the auth file for basic auth at https://imti.co/kubernetes-ingress-basic-auth/
 
 ### Github actions
 
 - All workflows are located in `./github`
 - The current flows are:
-  -  `main` that runs on the `main` branch and it will install dependencies (kubectl, skaffold) and will run `skaffold run` command 
+  - `main` that runs on the `main` branch and will install dependencies (kubectl, skaffold) and run `skaffold run` command 
   - `test` runs on a pull request and runs all tests in different packages
-- we have credentials for a service account for Docker (credentials in LastPass) and add them as secrets in Github (DOCKER_USER, DOCKER_PASSWORD)
+> NOTE: We have credentials for a service account for Docker in LastPass. Add them as secrets in Github (DOCKER_USER, DOCKER_PASSWORD)
 
-> NOTE: about the kube config used to connect to the cluster
+> NOTE: About the kube config used to connect to the cluster
 - in the `main.yml` workflow we replace placeholder values from the config defined in `k8s/config.yaml`
 - the values used are stored as secrets in Github
   - KUBE_CLUSTER_NAME (a suggestive name, doesn't affect connectivity)
@@ -94,7 +95,7 @@
 
   #### k8s/base/dependencies and k8s/dependencies-prod
 
-  - this was an attempt at trying to use `kustomize` for separating the resource files for `dependencies` (minio, postgres, rabbitmq, redis...)
+  - this was a try at trying to use `kustomize` for separating the resource files for `dependencies` (minio, postgres, rabbitmq, redis...)
   - it has it's own `skaffold` command defined further down
   - since majority of databases are defined using a `StatefulSet` this approach with `kustomize` and `skaffold` works best when you setup the cluster from scratch. 
   - an issue with this approach instead of using plain `kubectl apply -f` commands is that when you want to add a new database in the mix, you would create the yaml file, add it to the `kustomization` file and then you want to run the `skaffold` command

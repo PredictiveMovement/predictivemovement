@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: mariadb
+    app.kubernetes.io/managed-by: skaffold-v1.4.0
+    chart: mariadb-7.3.16
+  name: predictivemovement-ghost-mariadb
+  namespace: predictivemovement-se
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb
+  serviceName: predictivemovement-ghost-mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+        app.kubernetes.io/managed-by: skaffold-v1.4.0
+        chart: mariadb-7.3.16
+    spec:
+      containers:
+      - env:
+        - name: MARIADB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: mariadb-root-password
+              name: mariadb-password
+        - name: MARIADB_USER
+          value: bn_ghost
+        - name: MARIADB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: mariadb-password
+              name: mariadb-password
+        - name: MARIADB_DATABASE
+          value: bitnami_ghost
+        image: docker.io/bitnami/mariadb:10.3.22-debian-10-r60
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - |
+              password_aux="${MARIADB_ROOT_PASSWORD:-}"
+              if [ -f "${MARIADB_ROOT_PASSWORD_FILE:-}" ]; then
+                  password_aux=$(cat $MARIADB_ROOT_PASSWORD_FILE)
+              fi
+              mysqladmin status -uroot -p$password_aux
+          failureThreshold: 3
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: mariadb
+        ports:
+        - containerPort: 3306
+          name: mysql
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - |
+              password_aux="${MARIADB_ROOT_PASSWORD:-}"
+              if [ -f "${MARIADB_ROOT_PASSWORD_FILE:-}" ]; then
+                  password_aux=$(cat $MARIADB_ROOT_PASSWORD_FILE)
+              fi
+              mysqladmin status -uroot -p$password_aux
+          failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        terminationMessagePath: /opt/bitnami/mariadb/logs/mysqld.log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /bitnami/mariadb
+          name: data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1001
+        runAsUser: 1001
+      serviceAccount: default
+      serviceAccountName: default
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: predictivemovement-ghost-mariadb
+        name: config
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      labels:
+        app: mariadb
+        app.kubernetes.io/managed-by: skaffold-v1.4.0
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 8Gi
+      volumeMode: Filesystem
+    status:
+      phase: Pending
+

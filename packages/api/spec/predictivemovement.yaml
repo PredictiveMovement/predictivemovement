@@ -42,7 +42,7 @@ paths:
                       type: number
                     weight:
                       type: number
-                  required: 
+                  required:
                     - volume
                     - weight
                 earliest_start:
@@ -55,7 +55,7 @@ paths:
                   $ref: "#/components/schemas/Address"
                 end_address:
                   $ref: "#/components/schemas/Address"
-              required: 
+              required:
                 - start_address
                 - end_address
                 - capacity
@@ -63,20 +63,20 @@ paths:
               standard_transport:
                 value:
                   start_address:
-                      city: "Stockholm"
-                      street: "Visättra Backe 6"
-                      name: "Visättra backe 6, Stockholm"
-                      position:
-                        lon: 17.958416
-                        lat: 59.215666
-                  end_address:     
                     city: "Stockholm"
                     street: "Visättra Backe 6"
                     name: "Visättra backe 6, Stockholm"
                     position:
                       lon: 17.958416
                       lat: 59.215666
-                  capacity: 
+                  end_address:
+                    city: "Stockholm"
+                    street: "Visättra Backe 6"
+                    name: "Visättra backe 6, Stockholm"
+                    position:
+                      lon: 17.958416
+                      lat: 59.215666
+                  capacity:
                     volume: 34
                     weight: 4
       responses:
@@ -86,7 +86,20 @@ paths:
             application/json; charset=utf-8:
               schema:
                 $ref: "#/components/schemas/Transport"
-
+  /itinerary:
+    post:
+      operationId: create_itinerary
+      summary: Create an itinerary
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  foo:
+                    type: string
   /itinerary/{transport_id}:
     get:
       operationId: get_itinerary
@@ -105,7 +118,7 @@ paths:
           content:
             application/json; charset=utf-8:
               schema:
-                $ref: "#/components/schemas/Itinerary" 
+                $ref: "#/components/schemas/Itinerary"
   /bookings:
     post:
       operationId: "create_booking"
@@ -120,7 +133,7 @@ paths:
                 pickup:
                   type: object
                   properties:
-                    address: 
+                    address:
                       $ref: "#/components/schemas/Address"
                     contact:
                       $ref: "#/components/schemas/Contact"
@@ -130,16 +143,16 @@ paths:
                 delivery:
                   type: object
                   properties:
-                    address: 
+                    address:
                       $ref: "#/components/schemas/Address"
-                    contact: 
+                    contact:
                       $ref: "#/components/schemas/Contact"
                   required:
                     - address
                     # - contact
                 size:
                   $ref: "#/components/schemas/Size"
-                metadata: 
+                metadata:
                   $ref: "#/components/schemas/AnyValue"
                 external_id:
                   description: An ID, eg. from PostNord, that correlates this booking to a 3rd party system's ID
@@ -189,9 +202,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Booking"
   /places/route:
-     get:
+    get:
       operationId: "get_route"
-      summary: Get route between two locations  
+      summary: Get route between two locations
       parameters:
         - name: from_lat
           in: query
@@ -297,21 +310,21 @@ components:
         earliest_start:
           type: string
           # format: date-time
-        latest_end: 
+        latest_end:
           type: string
           # format: date-time
         start_address:
           $ref: "#/components/schemas/Address"
         end_address:
           $ref: "#/components/schemas/Address"
-    Contact: 
+    Contact:
       type: object
       properties:
         name:
           type: string
         phone_number:
           type: string
-        info: 
+        info:
           description: Extra information regarding sender or recipient
           type: string
     Size:
@@ -321,22 +334,22 @@ components:
           type: number
         dimensions:
           $ref: "#/components/schemas/Dimensions"
-    Route: 
+    Route:
       type: object
       properties:
-        geometry: 
+        geometry:
           $ref: "#/components/schemas/Geometry"
         legs:
           type: array
           items:
             $ref: "#/components/schemas/Leg"
-        distance: 
+        distance:
           type: number
-        duration: 
+        duration:
           type: number
         weight_name:
           type: string
-        weight: 
+        weight:
           type: number
     Geometry:
       type: object
@@ -345,28 +358,28 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Coordinate"
-    Step: 
+    Step:
       type: object
-      properties: 
+      properties:
         intersections:
           type: array
           items:
             $ref: "#/components/schemas/Intersection"
-        driving_side: 
+        driving_side:
           type: string
-        geometry: 
+        geometry:
           type: string
-        mode: 
+        mode:
           type: string
-        duration: 
+        duration:
           type: number
         maneuver:
           $ref: "#/components/schemas/Maneuver"
-        weight: 
+        weight:
           type: number
-        distance: 
+        distance:
           type: number
-        name: 
+        name:
           type: string
     Intersection:
       type: object

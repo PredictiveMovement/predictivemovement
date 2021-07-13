@@ -61,6 +61,8 @@ export const get_itinerary: Handler = (c, _req, res) => {
   })
 }
 
+// export const create_itinerary: Handler = async (ctx, _req, res) => {}
+
 export const create_booking: Handler = async (ctx, req, res) => {
   req.setTimeout(REQUEST_TIMEOUT)
 

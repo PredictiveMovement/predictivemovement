@@ -42,6 +42,7 @@
 - `base` folder contains `dependencies` (databases) and `stack` (applications) that are deployed to `predictivemovement-dev`
 - `overlay` folder contains `dependencies-prod` (databases) and `stack-prod` (applications) that use the corresponding folder from `base` and extend it and then are deployed to `predictivemovement` namespace
 > NOTE: Read me about our use of Kustomize overlays below
+- `ghost-website` folder contains the configuration for `https://predictivemovement.se` (instructions are available further down)
 
 #### k8s secrets
 
@@ -162,3 +163,40 @@ And run
   - Is currently only inside `k8s/overlays/dependencies-prod` and deployed only to `prod` but used from localhost, dev, prod
 
   > NOTE: OSRM should probably be moved to its own namespace FIXME
+
+  #### Ghost website
+
+  - This assumes that the DNS configuration is setup so that `predictivemovement.se` points to the cluster you use
+ 
+  - Edit the secrets `k8s/ghost-website/ghost-secret.yaml` and `k8s/ghost-website/mariadb-password-secret.yaml` and replace the template values (instructions are in the yaml files when you open them)
+
+  - After editing the secrets, you can apply all k8s configuration files (secrets and deployments for ghost and mariadb) running:
+
+    ```bash
+    kubectl apply -f k8s/ghost-website
+    ```
+
+  - After the pods are running you have to add the ghost and mariadb content for the website.  
+    
+    Backup of data is available in [Google Drive - search for Predictive Movement Data folder](https://drive.google.com/drive/u/0/folders/1qIcIHCfp91TuBNyV7kja_VyqZekeoml_)
+    
+    - First download the backups and you are going to copy them into the pods. Since both deployments use volumes, this restore only has to be done once.
+
+    - Retrieve the specific pod name for ghost or mariadb
+
+      ```bash
+      kubectl get pods -n predictivemovement-se
+      ```
+    
+    - Using [kubectl cp](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#cp) copy the backup contents to each pod (you've retrieved their names with the command above) at these paths:
+      
+       - `/bitnami/mariadb` for mariadb
+       - `/bitnami/ghost` for ghost
+
+    
+    > NOTE: You might have to restart mariadb after restoring the backup.  
+      Or possibly you might not be able to overwrite existing mariadb pod folder while it's running the mariadb command.  
+      In case you cannot overwrite the existing mariadb folder, update `ghost-mariadb.yaml` and add [a command for the container to sleep](https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#run-a-command-in-a-shell).  
+      Changing the command should allow you to use `kubectl cp` and correctly overwrite the existing contents and after that just revert the sleep command and run `kubectl apply` on mariadb again.
+  
+    

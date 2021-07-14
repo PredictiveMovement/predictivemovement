@@ -64,7 +64,8 @@ defmodule Engine.Application do
       Engine.VehicleDeleteProcessor,
       Engine.BookingUpdateProcessor,
       Engine.VehicleUpdateProcessor,
-      Engine.HealthProcessor
+      Engine.HealthProcessor,
+      Engine.TripProcessor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

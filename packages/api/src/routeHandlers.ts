@@ -1,6 +1,7 @@
 import { Handler } from 'openapi-backend'
 import { createBooking } from './booking/engineAdapter'
 import { createTransport } from './transport/engineAdapter'
+import { calculateTrip } from './trip/engineAdapter'
 import { operations } from './__generated__/schema'
 import { getRoute } from './osrm/engineAdapter'
 const REQUEST_TIMEOUT = process.env.REQUEST_TIMEOUT
@@ -61,7 +62,10 @@ export const get_itinerary: Handler = (c, _req, res) => {
   })
 }
 
-// export const create_itinerary: Handler = async (ctx, _req, res) => {}
+export const create_trip: Handler = async (_ctx, _req, res) => {
+  await calculateTrip()
+  res.status(202).end()
+}
 
 export const create_booking: Handler = async (ctx, req, res) => {
   req.setTimeout(REQUEST_TIMEOUT)

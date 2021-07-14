@@ -10,23 +10,23 @@ info:
     email: predictivemovement@iteam.se
   license:
     name: Apache 2.0
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 paths:
   /transports:
     get:
       operationId: get_transports
       summary: Get all the transports to which you have access
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json; charset=utf-8:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Transport"
+                  $ref: '#/components/schemas/Transport'
     post:
-      operationId: "create_transport"
+      operationId: 'create_transport'
       summary: Create a new transport
       requestBody:
         required: true
@@ -52,9 +52,9 @@ paths:
                   type: string
                   # format: date-time
                 start_address:
-                  $ref: "#/components/schemas/Address"
+                  $ref: '#/components/schemas/Address'
                 end_address:
-                  $ref: "#/components/schemas/Address"
+                  $ref: '#/components/schemas/Address'
               required:
                 - start_address
                 - end_address
@@ -63,16 +63,16 @@ paths:
               standard_transport:
                 value:
                   start_address:
-                    city: "Stockholm"
-                    street: "Visättra Backe 6"
-                    name: "Visättra backe 6, Stockholm"
+                    city: 'Stockholm'
+                    street: 'Visättra Backe 6'
+                    name: 'Visättra backe 6, Stockholm'
                     position:
                       lon: 17.958416
                       lat: 59.215666
                   end_address:
-                    city: "Stockholm"
-                    street: "Visättra Backe 6"
-                    name: "Visättra backe 6, Stockholm"
+                    city: 'Stockholm'
+                    street: 'Visättra Backe 6'
+                    name: 'Visättra backe 6, Stockholm'
                     position:
                       lon: 17.958416
                       lat: 59.215666
@@ -80,26 +80,19 @@ paths:
                     volume: 34
                     weight: 4
       responses:
-        "201":
+        '201':
           description: Created
           content:
             application/json; charset=utf-8:
               schema:
-                $ref: "#/components/schemas/Transport"
-  /itinerary:
+                $ref: '#/components/schemas/Transport'
+  /trip:
     post:
-      operationId: create_itinerary
-      summary: Create an itinerary
+      operationId: create_trip
+      summary: Create an trip
       responses:
-        "200":
+        '202':
           description: OK
-          content:
-            application/json; charset=utf-8:
-              schema:
-                type: object
-                properties:
-                  foo:
-                    type: string
   /itinerary/{transport_id}:
     get:
       operationId: get_itinerary
@@ -111,17 +104,17 @@ paths:
           required: true
           schema:
             type: string
-          example: "pmv-2314"
+          example: 'pmv-2314'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json; charset=utf-8:
               schema:
-                $ref: "#/components/schemas/Itinerary"
+                $ref: '#/components/schemas/Itinerary'
   /bookings:
     post:
-      operationId: "create_booking"
+      operationId: 'create_booking'
       summary: Create a new booking
       requestBody:
         required: true
@@ -134,9 +127,9 @@ paths:
                   type: object
                   properties:
                     address:
-                      $ref: "#/components/schemas/Address"
+                      $ref: '#/components/schemas/Address'
                     contact:
-                      $ref: "#/components/schemas/Contact"
+                      $ref: '#/components/schemas/Contact'
                   required:
                     - address
                     # - contact
@@ -144,16 +137,16 @@ paths:
                   type: object
                   properties:
                     address:
-                      $ref: "#/components/schemas/Address"
+                      $ref: '#/components/schemas/Address'
                     contact:
-                      $ref: "#/components/schemas/Contact"
+                      $ref: '#/components/schemas/Contact'
                   required:
                     - address
                     # - contact
                 size:
-                  $ref: "#/components/schemas/Size"
+                  $ref: '#/components/schemas/Size'
                 metadata:
-                  $ref: "#/components/schemas/AnyValue"
+                  $ref: '#/components/schemas/AnyValue'
                 external_id:
                   description: An ID, eg. from PostNord, that correlates this booking to a 3rd party system's ID
                   type: string
@@ -166,9 +159,9 @@ paths:
                 value:
                   pickup:
                     address:
-                      city: "Stockholm"
-                      street: "Visättra Backe 6"
-                      name: "Visättra backe 6, Stockholm"
+                      city: 'Stockholm'
+                      street: 'Visättra Backe 6'
+                      name: 'Visättra backe 6, Stockholm'
                       position:
                         lon: 17.958416
                         lat: 59.215666
@@ -178,9 +171,9 @@ paths:
                     #   info: ""
                   delivery:
                     address:
-                      city: "Trelleborg"
-                      name: "Götagatan 26, Trelleborg"
-                      street: "Götagatan 26"
+                      city: 'Trelleborg'
+                      name: 'Götagatan 26, Trelleborg'
+                      street: 'Götagatan 26'
                       position:
                         lon: 13.166109
                         lat: 55.383959
@@ -195,15 +188,15 @@ paths:
                       height: 10
                       length: 10
       responses:
-        "201":
+        '201':
           description: Created
           content:
             application/json; charset=utf-8:
               schema:
-                $ref: "#/components/schemas/Booking"
+                $ref: '#/components/schemas/Booking'
   /places/route:
     get:
-      operationId: "get_route"
+      operationId: 'get_route'
       summary: Get route between two locations
       parameters:
         - name: from_lat
@@ -235,12 +228,12 @@ paths:
             type: number
           example: 18.047947
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json; charset=utf-8:
               schema:
-                $ref: "#/components/schemas/Route"
+                $ref: '#/components/schemas/Route'
 
 components:
   schemas:
@@ -262,7 +255,7 @@ components:
           type: string
           enum: [start, end, pickup, delivery]
         position:
-          $ref: "#/components/schemas/Position"
+          $ref: '#/components/schemas/Position'
       required:
         - id
         - booking_id
@@ -280,7 +273,7 @@ components:
         name:
           type: string
         position:
-          $ref: "#/components/schemas/Position"
+          $ref: '#/components/schemas/Position'
       required:
         - position
         - city
@@ -314,9 +307,9 @@ components:
           type: string
           # format: date-time
         start_address:
-          $ref: "#/components/schemas/Address"
+          $ref: '#/components/schemas/Address'
         end_address:
-          $ref: "#/components/schemas/Address"
+          $ref: '#/components/schemas/Address'
     Contact:
       type: object
       properties:
@@ -333,16 +326,16 @@ components:
         weight:
           type: number
         dimensions:
-          $ref: "#/components/schemas/Dimensions"
+          $ref: '#/components/schemas/Dimensions'
     Route:
       type: object
       properties:
         geometry:
-          $ref: "#/components/schemas/Geometry"
+          $ref: '#/components/schemas/Geometry'
         legs:
           type: array
           items:
-            $ref: "#/components/schemas/Leg"
+            $ref: '#/components/schemas/Leg'
         distance:
           type: number
         duration:
@@ -357,14 +350,14 @@ components:
         coordinates:
           type: array
           items:
-            $ref: "#/components/schemas/Coordinate"
+            $ref: '#/components/schemas/Coordinate'
     Step:
       type: object
       properties:
         intersections:
           type: array
           items:
-            $ref: "#/components/schemas/Intersection"
+            $ref: '#/components/schemas/Intersection'
         driving_side:
           type: string
         geometry:
@@ -374,7 +367,7 @@ components:
         duration:
           type: number
         maneuver:
-          $ref: "#/components/schemas/Maneuver"
+          $ref: '#/components/schemas/Maneuver'
         weight:
           type: number
         distance:
@@ -422,11 +415,11 @@ components:
       type: object
       properties:
         annotation:
-          $ref: "#/components/schemas/Annotation"
+          $ref: '#/components/schemas/Annotation'
         steps:
           type: array
           items:
-            $ref: "#/components/schemas/Step"
+            $ref: '#/components/schemas/Step'
         distance:
           type: number
         duration:
@@ -439,7 +432,7 @@ components:
       type: object
       properties:
         metadata:
-          $ref: "#/components/schemas/Metadata"
+          $ref: '#/components/schemas/Metadata'
         nodes:
           type: array
           items:
@@ -480,18 +473,18 @@ components:
           type: object
           properties:
             address:
-              $ref: "#/components/schemas/Address"
+              $ref: '#/components/schemas/Address'
             # contact:
             #   $ref: "#/components/schemas/Contact"
         pickup:
           type: object
           properties:
             address:
-              $ref: "#/components/schemas/Address"
+              $ref: '#/components/schemas/Address'
             # contact:
             #   $ref: "#/components/schemas/Contact"
         size:
-          $ref: "#/components/schemas/Size"
+          $ref: '#/components/schemas/Size'
       required:
         - id
         - delivery
@@ -520,7 +513,7 @@ components:
         activities:
           type: array
           items:
-            $ref: "#/components/schemas/Activity"
+            $ref: '#/components/schemas/Activity'
       xml:
         name: Trips
       required:

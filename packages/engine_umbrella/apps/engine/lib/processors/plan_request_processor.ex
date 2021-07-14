@@ -9,8 +9,8 @@ defmodule Engine.PlanRequestProcessor do
         module:
           {BroadwayRabbitMQ.Producer,
            after_connect: fn _ -> Logger.info("#{__MODULE__} connected to rabbitmq") end,
-           queue: "request_plan",
-           declare: [durable: false],
+           queue: "calculate_trip",
+           declare: [durable: true],
            on_failure: :reject,
            connection: [
              host: Application.fetch_env!(:engine, :amqp_host)

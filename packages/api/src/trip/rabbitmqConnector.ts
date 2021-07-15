@@ -20,31 +20,32 @@ interface Activity {
 
 export interface Trip {
   booking_ids: string[]
-  excluded_booking_ids: string[]
-  transports: [
-    {
-      activities: Activity[]
-      booking_ids: string[]
-      capacity: {
-        volume: number
-        weight: number
-      }
-      earliest_start: string
-      end_address: {
-        lat: number
-        lon: number
-      }
-      id: string
-      latest_end: string
-      start_address: {
-        lat: number
-        lon: number
-      }
+  excluded_booking_ids: {
+    id: string
+    status: string
+  }[]
+  transports: {
+    activities: Activity[]
+    booking_ids: string[]
+    capacity: {
+      volume: number
+      weight: number
     }
-  ]
+    earliest_start: string
+    end_address: {
+      lat: number
+      lon: number
+    }
+    id: string
+    latest_end: string
+    start_address: {
+      lat: number
+      lon: number
+    }
+  }[]
 }
 
-const publishCalculateTrip = () => {
+const calculateTrip = () => {
   return amqp
     .queue(CALCULATE_TRIP_QUEUE, {
       durable: true,
@@ -83,4 +84,4 @@ amqp
     emitter.emit(correlationId, trip)
   })
 
-export { publishCalculateTrip, getTrip }
+export { calculateTrip, getTrip }

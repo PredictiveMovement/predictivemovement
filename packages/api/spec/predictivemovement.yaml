@@ -93,25 +93,16 @@ paths:
       responses:
         '202':
           description: OK
-  /itinerary/{transport_id}:
     get:
-      operationId: get_itinerary
-      summary: Get an itinerary by transport ID
-      parameters:
-        - name: transport_id
-          in: path
-          description: ID of the transport to which the itinerary is assigned
-          required: true
-          schema:
-            type: string
-          example: 'pmv-2314'
+      operationId: get_trip
+      summary: Get trip
       responses:
         '200':
           description: OK
           content:
             application/json; charset=utf-8:
               schema:
-                $ref: '#/components/schemas/Itinerary'
+                $ref: '#/components/schemas/Trip'
   /bookings:
     post:
       operationId: 'create_booking'
@@ -503,17 +494,35 @@ components:
           format: float
     Plan:
       type: object
-    Itinerary:
+    Trip:
       type: object
       properties:
-        transport_id:
-          type: string
-        route:
-          type: object
-        activities:
+        booking_ids:
           type: array
           items:
-            $ref: '#/components/schemas/Activity'
+            type: string
+        excluded_booking_ids:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              status:
+                type: string
+        transports:
+          type: array
+          items:
+            type: object
+            properties:
+              transport_id:
+                type: string
+              route:
+                type: object
+              activities:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Activity'
       xml:
         name: Trips
       required:

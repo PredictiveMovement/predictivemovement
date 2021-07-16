@@ -16,7 +16,7 @@
 - [kustomize](https://kubernetes-sigs.github.io/kustomize/installation/)
 - [kubectx + kubens](https://github.com/ahmetb/kubectx) (not needed but highly recommended)
 
-### Kubernetes resources structure
+## Kubernetes resources structure
 
 - We use our own Kubernetes cluster, more information how to connect to it you can get in the [drift Slack channel](https://iteamsolutions.slack.com/archives/C02LSCREN)
 - All resources are located in [k8s folder](../k8s)
@@ -33,7 +33,7 @@
 > - `predictivemovement-dev` namespace and github-actions are not configured as mentioned above FIXME
 > - the k8s resources for https://predictivemovement.se were not added to this repository FIXME
 
-#### k8s folder description
+### k8s folder description
 
 - `cicd-rbac.yaml` creates a service account that is used for connecting to the cluster from Github actions
 - `config.yaml` contains the cluster connection config that is used from Github actions
@@ -44,7 +44,7 @@
 > NOTE: Read me about our use of Kustomize overlays below
 - `ghost-website` folder contains the configuration for `https://predictivemovement.se` (instructions are available further down)
 
-#### k8s secrets
+### k8s secrets
 
 - Secrets are created manually
 - You find the values in LastPass for different environments (`dev`, `prod`) or feel free to create and update them in the specific namespace used
@@ -62,19 +62,19 @@
 
 > NOTE: Learn to create the auth file for basic auth at https://imti.co/kubernetes-ingress-basic-auth/
 
-### Github actions
+## Github actions
 
 - All workflows are located in `./github`
 - The current flows are:
   - `main` that runs on the `main` branch and will install dependencies (kubectl, skaffold) and run `skaffold run` command 
   - `test` runs on a pull request and runs all tests in different packages
 
-#### Docker service account
+### Docker service account
 We have credentials for a service account for Docker in LastPass. Add them as secrets in Github.
 - DOCKER_USER
 - DOCKER_PASSWORD
 
-#### kube config for connecting to cluster
+### kube config for connecting to cluster
 - in the `main.yml` workflow we replace placeholder values from the config defined in `k8s/config.yaml`
 - the replacement values are stored in the following Github secrets
   - KUBE_CLUSTER_NAME (doesn't affect connectivity)
@@ -84,28 +84,28 @@ We have credentials for a service account for Docker in LastPass. Add them as se
   - KUBE_USER_TOKEN (Find the name of the secret with `kubectl get secrets --all-namespaces` and look for something like "cicd", then the get the secret using `kubectl get secrets <secret name> -o yaml`)
   - > NOTE: kubectl gives you the secret base64-encoded, you might need to decode it
 
-### Kustomize
+## Kustomize
 
 - Kustomize allows you to define `bases` that you can extend from `overlays`
 - a simple example [how to use kustomize](https://github.com/Iteam1337/devops/tree/master/lab/kustomize) 
 
 
-  #### dev
+  ### dev
   - for the `dev` environment we define everything in `k8s/base/stack`
   - the `kustomization.yaml` has a list of `resources` that are created, the namespace that will be used and a config map generator that creates [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/) in our cluster (one for common properties reused by majority of pods and an engine specific one)
 
-  #### prod
+  ### prod
   - for the `prod` environment we define everything in `k8s/overlays/stack-prod`
   - the `kustomization.yaml` inside this reuses the base from `k8s/base/stack` and extends that with some customizations like [patchStrategicMerge](https://kubectl.docs.kubernetes.io/references/kustomize/glossary/#patchstrategicmerge) that allows us to duplicate less code (like the Ingress that should have a different URL between different environments), use a different namespace and define only properties that differ from the ones in `dev` with the [configMapGenerator](https://github.com/kubernetes-sigs/kustomize/blob/master/examples/configGeneration.md)
 
 
-  #### k8s/base/dependencies and k8s/dependencies-prod
+  ### k8s/base/dependencies and k8s/dependencies-prod
 
   - We use `kustomize` to separate the resource files for `dependencies` (minio, postgres, rabbitmq, redis...)
   - Since majority of our database configs are defined using `StatefulSet`, this approach with `kustomize` and `skaffold` works best when you setup the cluster from scratch. 
  > NOTE: An issue with this approach (rather than using plain `kubectl apply -f` commands) is that when you want to add a new database, and create the yaml file, add it to the `kustomization` file and run the `skaffold` command, you might get error due to statefulsets not allowing some updates. It should still successfully apply the new configuration and create your new database.
 
-### Skaffold
+## Skaffold
 
 [Skaffold](https://skaffold.dev/docs/) is the tool that allows us to automate the building, pushing and deploying of our code
 
@@ -124,7 +124,7 @@ We have credentials for a service account for Docker in LastPass. Add them as se
   
   > NOTE: No instructions for deploying `dev` as that is done by Github actions (see above)
   
-  #### prod
+  ### prod
 
   To deploy the dependencies of the stack (ie. databases)
   ```
@@ -138,7 +138,7 @@ We have credentials for a service account for Docker in LastPass. Add them as se
   skaffold run --profile prod
   ```
 
-### Data backups
+## Data backups
 
 We use [postgres-backup](https://github.com/alexanderczigler/docker/tree/master/postgres-backup)
 
@@ -151,20 +151,20 @@ And run
 /restore.sh /backup/latest.psql.gz # or choose a different backup you want
 ```
 
-### Application specific k8s quirks
+## Application specific k8s quirks
 
-  #### Pelias
+  ### Pelias
 
   - The csv-importer.yaml requires data from Lantmäteriet to be available on the node on the folder `/storage/lantmateriet/csv/` (it will read \*.csv)
   - To deploy `kubectl apply -f k8s/pelias`
 
-  #### OSRM
+  ### OSRM
   
   - Is currently only inside `k8s/overlays/dependencies-prod` and deployed only to `prod` but used from localhost, dev, prod
 
   > NOTE: OSRM should probably be moved to its own namespace FIXME
 
-  #### Ghost website
+## Predictivemovement.se website
 
   - This assumes that the DNS configuration is setup so that `predictivemovement.se` points to the cluster you use
  
@@ -176,11 +176,9 @@ And run
     kubectl apply -f k8s/ghost-website
     ```
 
-  - After the pods are running you have to add the ghost and mariadb content for the website.  
+  - After the pods are running you have to add the ghost and mariadb content for the website to the volumes used by the deployments.  
     
-    Backup of data is available in [Google Drive - search for Predictive Movement Data folder](https://drive.google.com/drive/u/0/folders/1qIcIHCfp91TuBNyV7kja_VyqZekeoml_)
-    
-    - First download the backups and you are going to copy them into the pods. Since both deployments use volumes, this restore only has to be done once.
+    - Download the backups from [Google Drive - in the Predictive Movement/Data folder](https://drive.google.com/drive/u/0/folders/1qIcIHCfp91TuBNyV7kja_VyqZekeoml_)
 
     - Retrieve the specific pod name for ghost or mariadb
 

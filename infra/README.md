@@ -168,12 +168,12 @@ And run
 
   - This assumes that the DNS configuration is setup so that `predictivemovement.se` points to the cluster you use
  
-  - Edit the secrets `k8s/ghost-website/ghost-secret.yaml` and `k8s/ghost-website/mariadb-password-secret.yaml` and replace the template values (instructions are in the yaml files when you open them)
+  - Edit the secrets `k8s/predictivemovement.se/ghost-secret.yaml` and `k8s/predictivemovement.se/mariadb-password-secret.yaml` and replace the template values (instructions are in the yaml files when you open them)
 
   - After editing the secrets, you can apply all k8s configuration files (secrets and deployments for ghost and mariadb) running:
 
     ```bash
-    kubectl apply -f k8s/ghost-website
+    kubectl apply -f k8s/predictivemovement.se
     ```
 
   - After the pods are running you have to add the ghost and mariadb content for the website to the volumes used by the deployments.  

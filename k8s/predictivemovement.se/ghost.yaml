@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    app: predictivemovement-ghost
+  name: predictivemovement-ghost
+  namespace: predictivemovement-se
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: predictivemovement-ghost
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: predictivemovement-ghost
+    spec:
+      containers:
+      - env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        - name: MARIADB_HOST
+          value: predictivemovement-ghost-mariadb
+        - name: MARIADB_PORT_NUMBER
+          value: "3306"
+        - name: GHOST_DATABASE_NAME
+          value: bitnami_ghost
+        - name: GHOST_DATABASE_USER
+          value: bn_ghost
+        - name: GHOST_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: mariadb-password
+              name: mariadb-password
+        - name: GHOST_HOST
+          value: predictivemovement.se/
+        - name: GHOST_PROTOCOL
+          value: https
+        - name: GHOST_PORT_NUMBER
+          value: "443"
+        - name: GHOST_USERNAME
+          value: christian.landgren@iteam.se
+        - name: GHOST_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: ghost-password
+              name: predictivemovement-ghost
+        - name: GHOST_EMAIL
+          value: christian.landgren@iteam.se
+        - name: BLOG_TITLE
+          value: predictivemovement
+        image: docker.io/bitnami/ghost:3-debian-10
+        imagePullPolicy: IfNotPresent
+        name: predictivemovement-ghost
+        ports:
+        - containerPort: 2368
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 300m
+            memory: 512Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /bitnami/ghost
+          name: predictivemovement-ghost
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1001
+        runAsUser: 1001
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: predictivemovement-ghost
+        persistentVolumeClaim:
+          claimName: predictivemovement-ghost

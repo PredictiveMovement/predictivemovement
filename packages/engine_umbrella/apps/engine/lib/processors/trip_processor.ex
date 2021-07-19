@@ -1,4 +1,4 @@
-defmodule Engine.PlanRequestProcessor do
+defmodule Engine.TripProcessor do
   use Broadway
   require Logger
 
@@ -9,26 +9,39 @@ defmodule Engine.PlanRequestProcessor do
         module:
           {BroadwayRabbitMQ.Producer,
            after_connect: fn _ -> Logger.info("#{__MODULE__} connected to rabbitmq") end,
-           queue: "calculate_trip",
+           queue: "get_trip",
            declare: [durable: true],
            on_failure: :reject,
+           metadata: [:amqp_channel, :correlation_id, :reply_to],
            connection: [
              host: Application.fetch_env!(:engine, :amqp_host)
            ]}
       ],
       processors: [
         default: [
-          concurrency: 1
+          concurrency: 100
         ]
       ]
     )
   end
 
-  def handle_message(_, message, _) do
-    booking_ids = Engine.BookingStore.get_bookings()
-    vehicle_ids = Engine.VehicleStore.get_vehicles()
+  def handle_message(
+        _,
+        %{
+          metadata: %{
+            amqp_channel: amqp_channel,
+            correlation_id: correlation_id,
+            reply_to: reply_to
+          }
+        } = message,
+        _
+      ) do
+    plan = PlanStore.get_plan()
 
-    Plan.calculate(vehicle_ids, booking_ids)
+    AMQP.Basic.publish(amqp_channel, "", reply_to, Jason.encode!(plan),
+      correlation_id: correlation_id
+    )
+
     message
   end
 end

@@ -10,8 +10,22 @@ describe('engine adapter', () => {
     it('generates an id and sends the booking payload to rabbit', async () => {
       expect.assertions(1)
       const bookingPayload = {
-        pickup: { address: { position: { lat: 31.337, lon: 69.69 } } },
-        delivery: { address: { position: { lat: 1.337, lon: 6.9 } } },
+        pickup: {
+          address: {
+            city: 'Stockholm',
+            street: 'Storgatan 1',
+            name: 'anna',
+            position: { lat: 31.337, lon: 69.69 }
+          }
+        },
+        delivery: {
+          address: {
+            city: 'Stockholm',
+            street: 'Storgatan 2',
+            name: 'anna',
+            position: { lat: 1.337, lon: 6.9 }
+          }
+        },
         metadata: {},
         size: {
           measurements: [105, 55, 16],

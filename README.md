@@ -132,3 +132,7 @@ Booking {
 Plan
 
 Route
+
+## License
+
+Predictive Movement is licensed under the MIT license. Please see [LICENSE.md](LICENSE.md) for details.

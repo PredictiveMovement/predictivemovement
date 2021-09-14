@@ -27,9 +27,7 @@ The source code for the project is contained in this mono-repo. Within the [pack
 
 ## Running the project
 
-#### Before you start running the project
-
-Start by exporting port 9200
+**Before you start running the project,** start by exporting port 9200
 
 ```
 kubectl port-forward elasticsearch-0 9200:9200 --namespace pelias
@@ -37,22 +35,27 @@ kubectl port-forward elasticsearch-0 9200:9200 --namespace pelias
 
 ### Running Predictive Movement locally
 
-You will need the following API keys
-POSTNORD_KEY - for engine-server
-REACT_APP_MAPBOX_ACCESS_TOKEN - for engine-ui
-GOOGLE_API_TOKEN - for driver-interface
-TELEGRAM_BOT_TOKEN - for driver-interface
+You will need the following API keys, they are stored in LastPass.
+
+* `POSTNORD_KEY` - for engine-server
+* `REACT_APP_MAPBOX_ACCESS_TOKEN` - for engine-ui
+* `GOOGLE_API_TOKEN` - for driver-interface
+* `TELEGRAM_BOT_TOKEN` - for driver-interface
 
 #### Set environment variables
 
-create .env-file in packages/driver-interface/.env with
+create .env-file at packages/driver-interface/.env with
 
-    GOOGLE_API_TOKEN=<FROM LASTPASS>
-    BOT_TOKEN=<FROM LASTPASS> / or create your own bot in telegram
+    GOOGLE_API_TOKEN=<API KEY>
+    BOT_TOKEN=<API KEY> / or create your own bot in telegram
 
-create .env-file in packages/engine-ui/.env with
+create .env-file at packages/engine-ui/.env with
 
-    REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
+    REACT_APP_MAPBOX_ACCESS_TOKEN=<API KEY>
+
+create .env-file at packages/engine-server/.env with
+
+    POSTNORD_KEY=<API KEY>
 
 #### Start the services
 

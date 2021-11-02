@@ -1,3 +1,65 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: predictivemovement-ghost
+  namespace: predictivemovement-se
+spec:
+  ports:
+    - port: 2368
+      targetPort: 2368
+  selector:
+    app: predictivemovement-ghost
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ghost-ingress
+  namespace: predictivemovement-se
+  annotations:
+    kubernetes.io/ingress.class: "public"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+    - hosts:
+        - predictivemovement.se
+        - www.predictivemovement.se
+      secretName: predictivemovement-se-tls
+  rules:
+    - host: predictivemovement.se
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: predictivemovement-ghost
+                port:
+                  number: 2368
+    - host: www.predictivemovement.se
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: predictivemovement-ghost
+                port:
+                  number: 2368
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: predictivemovement-ghost
+  name: predictivemovement-ghost
+  namespace: predictivemovement-se
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:

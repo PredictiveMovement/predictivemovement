@@ -4,17 +4,8 @@ kind: Kustomization
 
 # list of Resource Config to be Applied
 resources:
-  # - driver-interface.yaml
   - engine.yaml
-  # - engine-server.yaml
-  # - engine-ui.yaml
   - route-optimization-jsprit.yaml
-  # - vehicle-offer.yaml
-  # - auto-accept-offer.yaml
-  # - booking-dispatcher.yaml
-  # - signing-ui.yaml
-  # - extract-text-from-pic.yaml
-  # - booking-interface.yaml
   - api.yaml
 
 # namespace to deploy all Resources to

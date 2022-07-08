@@ -16,7 +16,7 @@ spec:
         app.kubernetes.io/name: postgres-backup
     spec:
       containers:
-        - image: iteamacr/postgres-backup:buster
+        - image: alexanderczigler/postgres-backup
           name: postgres-backup
           env:
             - name: PG_DB
